@@ -1,0 +1,307 @@
+SOURCE: grand mean
+HeadRel LocNRel  n    N       MEAN         SD         SE
+                722  144   482.9363    50.5498     4.2125
+
+SOURCE: HeadRel 
+HeadRel LocNRel  n    N       MEAN         SD         SE
+HeadN           357   72   479.6775    48.6501     5.7335
+UnrHead         365   72   486.1951    52.5184     6.1893
+
+SOURCE: LocNRel 
+HeadRel LocNRel  n    N       MEAN         SD         SE
+        NRel    244   48   476.0927    47.0456     6.7904
+        NAssc   242   48   476.4024    44.1093     6.3666
+        NUnr    236   48   496.3139    57.8052     8.3435
+
+SOURCE: HeadRel LocNRel 
+HeadRel LocNRel  n    N       MEAN         SD         SE
+HeadN   NRel    120   24   477.4847    44.7061     9.1256
+HeadN   NAssc   122   24   465.8535    44.4621     9.0758
+HeadN   NUnr    115   24   495.6944    53.4664    10.9138
+UnrHead NRel    124   24   474.7007    50.2009    10.2472
+UnrHead NAssc   120   24   486.9514    42.0327     8.5799
+UnrHead NUnr    121   24   496.9333    62.9977    12.8594
+
+FACTOR  :       Item    HeadRel    LocNRel Attr.vtime 
+LEVELS  :         24          2          3        144 
+TYPE    :     RANDOM     WITHIN     WITHIN       DATA 
+
+SOURCE                SS     df             MS         F      p
+===============================================================
+mean	   33584761.6228      1  33584761.6228  7429.311  0.000 ***
+I/	     103973.2368     23      4520.5755
+
+HeadRel	       1529.2437      1      1529.2437     0.850  0.366 
+HI/	      41383.5110     23      1799.2831
+
+LocNRel	      12887.3295      2      6443.6647     2.291  0.113 
+LI/	     129369.3941     46      2812.3781
+
+HL	       3923.6506      2      1961.8253     1.248  0.297 
+HLI/	      72338.3340     46      1572.5725
+
+
+
+SOURCE: grand mean
+HeadRel LocNRel  n    N       MEAN         SD         SE
+                480   96   486.2033    53.3988     5.4500
+
+SOURCE: HeadRel 
+HeadRel LocNRel  n    N       MEAN         SD         SE
+HeadN           235   48   486.5896    49.6149     7.1613
+UnrHead         245   48   485.8170    57.4595     8.2936
+
+SOURCE: LocNRel 
+HeadRel LocNRel  n    N       MEAN         SD         SE
+        NRel    244   48   476.0927    47.0456     6.7904
+        NUnr    236   48   496.3139    57.8052     8.3435
+
+SOURCE: HeadRel LocNRel 
+HeadRel LocNRel  n    N       MEAN         SD         SE
+HeadN   NRel    120   24   477.4847    44.7061     9.1256
+HeadN   NUnr    115   24   495.6944    53.4664    10.9138
+UnrHead NRel    124   24   474.7007    50.2009    10.2472
+UnrHead NUnr    121   24   496.9333    62.9977    12.8594
+
+FACTOR  :       Item    HeadRel    LocNRel Attr.vtime 
+LEVELS  :         24          2          2         96 
+TYPE    :     RANDOM     WITHIN     WITHIN       DATA 
+
+SOURCE                SS     df             MS         F      p
+===============================================================
+mean	   22693790.1341      1  22693790.1341  4645.387  0.000 ***
+I/	     112360.3219     23      4885.2314
+
+HeadRel	         14.3249      1        14.3249     0.006  0.938 
+HI/	      54007.0158     23      2348.1311
+
+LocNRel	       9813.5062      1      9813.5062     3.646  0.069 
+LI/	      61900.6413     23      2691.3322
+
+HL	         97.1029      1        97.1029     0.068  0.796 
+HLI/	      32693.1586     23      1421.4417
+
+
+
+SOURCE: grand mean
+HeadN    n    N       MEAN         SD         SE
+        235   48   486.5896    49.6149     7.1613
+
+SOURCE: HeadN 
+HeadN    n    N       MEAN         SD         SE
+NRel    120   24   477.4847    44.7061     9.1256
+NUnr    115   24   495.6944    53.4664    10.9138
+
+FACTOR  :       Item      HeadN Attr.vtime 
+LEVELS  :         24          2         48 
+TYPE    :     RANDOM     WITHIN       DATA 
+
+SOURCE                SS     df             MS         F      p
+===============================================================
+mean	   11364932.3624      1  11364932.3624  4208.497  0.000 ***
+I/	      62110.8790     23      2700.4730
+
+HeadN  	       3979.1282      1      3979.1282     1.845  0.188 
+HI/	      49606.7704     23      2156.8161
+
+
+
+SOURCE: grand mean
+UnrHead  n    N       MEAN         SD         SE
+        245   48   485.8170    57.4595     8.2936
+
+SOURCE: UnrHead 
+UnrHead  n    N       MEAN         SD         SE
+NRel    124   24   474.7007    50.2009    10.2472
+NUnr    121   24   496.9333    62.9977    12.8594
+
+FACTOR  :       Item    UnrHead Attr.vtime 
+LEVELS  :         24          2         48 
+TYPE    :     RANDOM     WITHIN       DATA 
+
+SOURCE                SS     df             MS         F      p
+===============================================================
+mean	   11328872.0965      1  11328872.0965  2499.261  0.000 ***
+I/	     104256.4587     23      4532.8895
+
+UnrHead	       5931.4810      1      5931.4810     3.033  0.095 
+UI/	      44987.0295     23      1955.9578
+
+
+
+SOURCE: grand mean
+HeadRel LocNRel  n    N       MEAN         SD         SE
+                478   96   486.3582    52.1140     5.3189
+
+SOURCE: HeadRel 
+HeadRel LocNRel  n    N       MEAN         SD         SE
+HeadN           237   48   480.7740    50.9282     7.3509
+UnrHead         241   48   491.9424    53.2180     7.6814
+
+SOURCE: LocNRel 
+HeadRel LocNRel  n    N       MEAN         SD         SE
+        NAssc   242   48   476.4024    44.1093     6.3666
+        NUnr    236   48   496.3139    57.8052     8.3435
+
+SOURCE: HeadRel LocNRel 
+HeadRel LocNRel  n    N       MEAN         SD         SE
+HeadN   NAssc   122   24   465.8535    44.4621     9.0758
+HeadN   NUnr    115   24   495.6944    53.4664    10.9138
+UnrHead NAssc   120   24   486.9514    42.0327     8.5799
+UnrHead NUnr    121   24   496.9333    62.9977    12.8594
+
+FACTOR  :       Item    HeadRel    LocNRel Attr.vtime 
+LEVELS  :         24          2          2         96 
+TYPE    :     RANDOM     WITHIN     WITHIN       DATA 
+
+SOURCE                SS     df             MS         F      p
+===============================================================
+mean	   22708248.9424      1  22708248.9424  5297.819  0.000 ***
+I/	      98585.7988     23      4286.3391
+
+HeadRel	       2993.5964      1      2993.5964     2.107  0.160 
+HI/	      32673.9458     23      1420.6063
+
+LocNRel	       9515.1857      1      9515.1857     3.026  0.095 
+LI/	      72332.0609     23      3144.8722
+
+HL	       2366.2880      1      2366.2880     1.376  0.253 
+HLI/	      39541.0852     23      1719.1776
+
+
+
+SOURCE: grand mean
+HeadN    n    N       MEAN         SD         SE
+        237   48   480.7740    50.9282     7.3509
+
+SOURCE: HeadN 
+HeadN    n    N       MEAN         SD         SE
+NAssc   122   24   465.8535    44.4621     9.0758
+NUnr    115   24   495.6944    53.4664    10.9138
+
+FACTOR  :       Item      HeadN Attr.vtime 
+LEVELS  :         24          2         48 
+TYPE    :     RANDOM     WITHIN       DATA 
+
+SOURCE                SS     df             MS         F      p
+===============================================================
+mean	   11094892.8054      1  11094892.8054  4829.754  0.000 ***
+I/	      52835.5106     23      2297.1961
+
+HeadN  	      10685.8049      1     10685.8049     4.210  0.052 
+HI/	      58381.8251     23      2538.3402
+
+
+
+SOURCE: grand mean
+UnrHead  n    N       MEAN         SD         SE
+        241   48   491.9424    53.2180     7.6814
+
+SOURCE: UnrHead 
+UnrHead  n    N       MEAN         SD         SE
+NAssc   120   24   486.9514    42.0327     8.5799
+NUnr    121   24   496.9333    62.9977    12.8594
+
+FACTOR  :       Item    UnrHead Attr.vtime 
+LEVELS  :         24          2         48 
+TYPE    :     RANDOM     WITHIN       DATA 
+
+SOURCE                SS     df             MS         F      p
+===============================================================
+mean	   11616349.7334      1  11616349.7334  3406.805  0.000 ***
+I/	      78424.2340     23      3409.7493
+
+UnrHead	       1195.6689      1      1195.6689     0.514  0.481 
+UI/	      53491.3211     23      2325.7096
+
+
+
+SOURCE: grand mean
+HeadRel LocNRel  n    N       MEAN         SD         SE
+                486   96   476.2476    45.3607     4.6296
+
+SOURCE: HeadRel 
+HeadRel LocNRel  n    N       MEAN         SD         SE
+HeadN           242   48   471.6691    44.4972     6.4226
+UnrHead         244   48   480.8260    46.2185     6.6711
+
+SOURCE: LocNRel 
+HeadRel LocNRel  n    N       MEAN         SD         SE
+        NRel    244   48   476.0927    47.0456     6.7904
+        NAssc   242   48   476.4024    44.1093     6.3666
+
+SOURCE: HeadRel LocNRel 
+HeadRel LocNRel  n    N       MEAN         SD         SE
+HeadN   NRel    120   24   477.4847    44.7061     9.1256
+HeadN   NAssc   122   24   465.8535    44.4621     9.0758
+UnrHead NRel    124   24   474.7007    50.2009    10.2472
+UnrHead NAssc   120   24   486.9514    42.0327     8.5799
+
+FACTOR  :       Item    HeadRel    LocNRel Attr.vtime 
+LEVELS  :         24          2          2         96 
+TYPE    :     RANDOM     WITHIN     WITHIN       DATA 
+
+SOURCE                SS     df             MS         F      p
+===============================================================
+mean	   21773927.8339      1  21773927.8339  8118.666  0.000 ***
+I/	      61685.0499     23      2681.9587
+
+HeadRel	       2012.3914      1      2012.3914     1.435  0.243 
+HI/	      32255.2274     23      1402.4012
+
+LocNRel	          2.3023      1         2.3023     0.001  0.977 
+LI/	      59821.3889     23      2600.9300
+
+HL	       3422.0850      1      3422.0850     2.170  0.154 
+HLI/	      36273.2572     23      1577.0981
+
+
+
+SOURCE: grand mean
+HeadN    n    N       MEAN         SD         SE
+        242   48   471.6691    44.4972     6.4226
+
+SOURCE: HeadN 
+HeadN    n    N       MEAN         SD         SE
+NRel    120   24   477.4847    44.7061     9.1256
+NAssc   122   24   465.8535    44.4621     9.0758
+
+FACTOR  :       Item      HeadN Attr.vtime 
+LEVELS  :         24          2         48 
+TYPE    :     RANDOM     WITHIN       DATA 
+
+SOURCE                SS     df             MS         F      p
+===============================================================
+mean	   10678643.4199      1  10678643.4199  5429.605  0.000 ***
+I/	      45235.1165     23      1966.7442
+
+HeadN  	       1623.4320      1      1623.4320     0.808  0.378 
+HI/	      46201.6398     23      2008.7669
+
+
+
+SOURCE: grand mean
+UnrHead  n    N       MEAN         SD         SE
+        244   48   480.8260    46.2185     6.6711
+
+SOURCE: UnrHead 
+UnrHead  n    N       MEAN         SD         SE
+NRel    124   24   474.7007    50.2009    10.2472
+NAssc   120   24   486.9514    42.0327     8.5799
+
+FACTOR  :       Item    UnrHead Attr.vtime 
+LEVELS  :         24          2         48 
+TYPE    :     RANDOM     WITHIN       DATA 
+
+SOURCE                SS     df             MS         F      p
+===============================================================
+mean	   11097296.8054      1  11097296.8054  5240.468  0.000 ***
+I/	      48705.1608     23      2117.6157
+
+UnrHead	       1800.9552      1      1800.9552     0.830  0.372 
+UI/	      49893.0064     23      2169.2611
+
+
+
+
+
