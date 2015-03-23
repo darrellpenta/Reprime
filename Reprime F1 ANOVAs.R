@@ -1,35 +1,49 @@
-rm(list = ls()) # clears environment
-library(languageR) # calls languageR library
+rm(list = ls()) 
+library(languageR) 
+library(reshape2)
+library(plyr)
+library(stringr)
 
-## -----------------------------------PREPARE DATA FILE FOR ANALYSES---------------------------------
-#
-f1vtimeout <- read.table("data/vtimeout.txt", header = F) # reads in all data from data file
+# CATEGORY ITEMS ==============================================================================================
+
+f1vtimeout <- read.table("data/vtimeoutc.txt", header = F) 
 colnames(f1vtimeout) <- c("subj", "item", "subexp", "headrel", "localrel", "vtime")
-d.cat <- subset(f1vtimeout, subexp == "Cat")
-d.cat$subj <- as.factor(d.cat$subj) # designates "subject" as a factor
-d.prop <- subset(f1vtimeout, subexp == "Attr")
-d.prop$subj <- as.factor(d.prop$subj) # designates "subject" as a factor
-d.semrel <- subset(f1vtimeout, subexp == "SemRel")
-d.semrel$subj <- as.factor(d.semrel$subj) # designates "subject" as a factor
+d.cat.base     <- subset(f1vtimeout, subexp == "Cat")
+d.cat          <- subset(f1vtimeout, subexp == "Cat")
 
-#========================================================================================================
-#
-#------------------------------------CATEGORY ITEMS--------------------------------------
-#
+# CAT: Collapse over subject
+d.cat$unique.id <- paste(d.cat[, 1], d.cat[, 3], d.cat[, 4], d.cat[, 5], sep = "_")
+d.cat           <- ddply(d.cat, "unique.id", function(X) data.frame(vtime = mean(X$vtime)))
+vtime           <- data.frame(d.cat$vtime)
+d.cat           <- colsplit(d.cat$unique.id, "_", c("subj", "subexp", "headrel", "localrel"))
+d.cat$subj      <- as.factor(d.cat$subj)
+d.cat           <- cbind(d.cat,vtime)
+colnames(d.cat)[5] <- "vtime"
+rm(vtime)
 
-# Below, designates various subsets of the original data file
-HeadN   <- subset(d.cat, headrel   ==  "HeadN") 
-UnrHead <- subset(d.cat, headrel   ==  "UnrHead")
-NRel    <- subset(d.cat, localrel  ==  "NRel") 
-NUnr    <- subset(d.cat, localrel  ==  "NUnr") 
+# CAT: All subjects subsetting
+HeadN.base         <- subset(d.cat.base, headrel   ==  "HeadN") 
+UnrHead.base       <- subset(d.cat.base, headrel   ==  "UnrHead")
+NRel.base          <- subset(d.cat.base, localrel  ==  "NRel") 
+NUnr.base          <- subset(d.cat.base, localrel  ==  "NUnr") 
+HeadN.NRel.base    <- subset(d.cat.base, headrel   ==  "HeadN"   & localrel  ==  "NRel") 
+HeadN.NUnr.base    <- subset(d.cat.base, headrel   ==  "HeadN"   & localrel  ==  "NUnr") 
+UnrHead.NRel.base  <- subset(d.cat.base, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
+UnrHead.NUnr.base  <- subset(d.cat.base, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
 
-HeadN.Nrel <- subset(d.cat, headrel   ==  "HeadN" & localrel  ==  "NRel") 
-HeadN.NUnr <- subset(d.cat, headrel   ==  "HeadN" & localrel  ==  "NUnr") 
-UnrHead.Nrel <- subset(d.cat, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
-UnrHead.NUnr <- subset(d.cat, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
+# CAT: Collapsed over subject sbsetting
+HeadN         <- subset(d.cat, headrel   ==  "HeadN") 
+UnrHead       <- subset(d.cat, headrel   ==  "UnrHead")
+NRel          <- subset(d.cat, localrel  ==  "NRel") 
+NUnr          <- subset(d.cat, localrel  ==  "NUnr") 
+HeadN.NRel    <- subset(d.cat, headrel   ==  "HeadN"   & localrel  ==  "NRel") 
+HeadN.NUnr    <- subset(d.cat, headrel   ==  "HeadN"   & localrel  ==  "NUnr") 
+UnrHead.NRel  <- subset(d.cat, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
+UnrHead.NUnr  <- subset(d.cat, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
+
 
 ds <- data.frame(data = c(
-  "gmean",
+  "Grand Mean",
   "HeadN",
   "UnrHead",
   "NRel",
@@ -39,24 +53,24 @@ ds <- data.frame(data = c(
   "UnrHead-NRel",
   "UnrHead-NUnr"),
   
-  n = c(length(d.cat$vtime),
-        length(HeadN$vtime), 
-        length(UnrHead$vtime),
-        length(NRel$vtime), 
-        length(NUnr$vtime), 
-        length(HeadN.Nrel$vtime),
-        length(HeadN.NUnr$vtime),
-        length(UnrHead.Nrel$vtime),
-        length(UnrHead.NUnr$vtime)),
+  n = c(length(d.cat.base$vtime),
+        length(HeadN.base$vtime), 
+        length(UnrHead.base$vtime),
+        length(NRel.base$vtime), 
+        length(NUnr.base$vtime), 
+        length(HeadN.NRel.base$vtime),
+        length(HeadN.NUnr.base$vtime),
+        length(UnrHead.NRel.base$vtime),
+        length(UnrHead.NUnr.base$vtime)),
   
   N = c(length(d.cat$vtime),
         length(HeadN$vtime), 
         length(UnrHead$vtime),
         length(NRel$vtime), 
         length(NUnr$vtime), 
-        length(HeadN.Nrel$vtime),
+        length(HeadN.NRel$vtime),
         length(HeadN.NUnr$vtime),
-        length(UnrHead.Nrel$vtime),
+        length(UnrHead.NRel$vtime),
         length(UnrHead.NUnr$vtime)),
   
   mean = c(mean(d.cat$vtime),
@@ -64,9 +78,9 @@ ds <- data.frame(data = c(
            mean(UnrHead$vtime),
            mean(NRel$vtime), 
            mean(NUnr$vtime), 
-           mean(HeadN.Nrel$vtime),
+           mean(HeadN.NRel$vtime),
            mean(HeadN.NUnr$vtime),
-           mean(UnrHead.Nrel$vtime),
+           mean(UnrHead.NRel$vtime),
            mean(UnrHead.NUnr$vtime)),
   
   sd = c(sd(d.cat$vtime),
@@ -74,9 +88,9 @@ ds <- data.frame(data = c(
          sd(UnrHead$vtime),
          sd(NRel$vtime), 
          sd(NUnr$vtime), 
-         sd(HeadN.Nrel$vtime),
+         sd(HeadN.NRel$vtime),
          sd(HeadN.NUnr$vtime),
-         sd(UnrHead.Nrel$vtime),
+         sd(UnrHead.NRel$vtime),
          sd(UnrHead.NUnr$vtime)),
   
   se = c(sd(d.cat$vtime)       / sqrt(length(d.cat$vtime)),
@@ -84,480 +98,1099 @@ ds <- data.frame(data = c(
          sd(UnrHead$vtime)     / sqrt(length(UnrHead$vtime)),
          sd(NRel$vtime)        / sqrt(length(NRel$vtime)), 
          sd(NUnr$vtime)        / sqrt(length(NUnr$vtime)), 
-         sd(HeadN.Nrel$vtime)  / sqrt(length(HeadN.Nrel$vtime)),
+         sd(HeadN.NRel$vtime)  / sqrt(length(HeadN.NRel$vtime)),
          sd(HeadN.NUnr$vtime)  / sqrt(length(HeadN.NUnr$vtime)),
-         sd(UnrHead.Nrel$vtime)/ sqrt(length(UnrHead.Nrel$vtime)),
+         sd(UnrHead.NRel$vtime)/ sqrt(length(UnrHead.NRel$vtime)),
          sd(UnrHead.NUnr$vtime)/ sqrt(length(UnrHead.NUnr$vtime))
   ))
 
 #
-# --------------------------------2 X 2 X 2 ANOVA-----------------------------------------------------
+# CAT: All 2X2 ANOVA-----------------------------------------------------
 
 sink("output/Reprime Category F1 Factorial Analyses.txt")
 
 cat(" ", "\n")
-cat("BY-SUBJECTS FACTORIAL ANALYSES RUN ON:", format(Sys.time(), "%b. %d, %Y at %T"), sep = "", fill= 70)
+cat("BY-SUBJECTS FACTORIAL ANALYSES RUN ON: ", format(Sys.time(), "%b. %d, %Y at %T"), sep = "", fill= 70)
 cat(" ", "\n")
 cat(rep(c("-"), times=40, quote=F),"\n")
 cat("2X2 ANOVA: CATEGORY COORDINATES", sep = "", fill = 60)
 cat(rep(c("-"), times=40, quote=F), "\n")
-print(ds) # prints descrip stats for 2x2x2 ANOVA
+print(ds) 
 cat(" ", "\n")
 
-# Computes the anova
 a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.cat)
 print(summary(a.2x2)) 
 cat(" ", "\n")
 cat(" ", "\n")
 
-
-
-#
-#========================================================================================================
-#
-#------------------------------------RELATED HEAD vs. UNRELATED HEADS-------------------------------------
-#
+# CAT: RELATED HEAD-------------------------------------------------------------------------------
 
 ds <- data.frame(data = c(
-  "gmean",
-  "HeadN",
-  "UnrHead"),
+  "HNoun",
+  "NRel",
+  "NUnrel"),
   
-  n = c(length(d.cat$vtime),
-        length(HeadN$vtime), 
-        length(UnrHead$vtime)),
+  n = c(length(HeadN.base$vtime),
+        length(HeadN.NRel.base$vtime), 
+        length(HeadN.NUnr.base$vtime)),
   
-  N = c(length(d.cat$vtime),
-        length(HeadN$vtime), 
-        length(UnrHead$vtime)),
+  N = c(length(HeadN$vtime),
+        length(HeadN.NRel$vtime), 
+        length(HeadN.NUnr$vtime)),
   
-  mean = c(mean(d.cat$vtime),
-           mean(HeadN$vtime), 
-           mean(UnrHead$vtime)),
+  mean = c(mean(HeadN$vtime),
+           mean(HeadN.NRel$vtime), 
+           mean(HeadN.NUnr$vtime)),
   
-  sd = c(sd(d.cat$vtime),
-         sd(HeadN$vtime), 
-         sd(UnrHead$vtime)),
+  sd = c(sd(HeadN$vtime),
+         sd(HeadN.NRel$vtime), 
+         sd(HeadN.NUnr$vtime)),
   
-  se = c(sd(d.cat$vtime)       / sqrt(length(d.cat$vtime)),
-         sd(HeadN$vtime)       / sqrt(length(HeadN$vtime)), 
-         sd(UnrHead$vtime)     / sqrt(length(UnrHead$vtime))
+  se = c(sd(HeadN$vtime)       / sqrt(length(HeadN$vtime)),
+         sd(HeadN.NRel$vtime)  / sqrt(length(HeadN.NRel$vtime)), 
+         sd(HeadN.NUnr$vtime)  / sqrt(length(HeadN.NUnr$vtime))
   ))
 
+cat("\n")
+cat("RELATED HEAD: NRel vs. NUnrel", sep = "", fill = 60)
+cat(rep(c("-"), times = 40, quote = F), "\n")
+print(ds) 
+cat(" ", "\n")
+
+a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = HeadN) 
+print(summary(a.h.relunrel)) 
+cat(" ", "\n")
+cat(" ", "\n")
+
+
+# CAT: UNRELATED HEAD  -------------------------------------------------------------------------------------------
+
+ds <- data.frame(data = c(
+  "UnrHead",
+  "NRel",
+  "NUnrel"),
+
+  n = c(length(UnrHead.base$vtime),
+        length(UnrHead.NRel.base$vtime), 
+        length(UnrHead.NUnr.base$vtime)),
+  
+  N = c(length(HeadN$vtime),
+        length(UnrHead.NRel$vtime), 
+        length(UnrHead.NUnr$vtime)),
+  
+  mean = c(mean(HeadN$vtime),
+           mean(UnrHead.NRel$vtime), 
+           mean(UnrHead.NUnr$vtime)),
+  
+  sd = c(sd(HeadN$vtime),
+         sd(UnrHead.NRel$vtime), 
+         sd(UnrHead.NUnr$vtime)),
+  
+  se = c(sd(HeadN$vtime)       / sqrt(length(HeadN$vtime)),
+         sd(UnrHead.NRel$vtime)  / sqrt(length(UnrHead.NRel$vtime)), 
+         sd(UnrHead.NUnr$vtime)  / sqrt(length(UnrHead.NUnr$vtime))
+  ))
+
+cat("\n")
+cat("UNRELATED HEAD: NRel vs. NUnrel", sep = "", fill = 60)
+cat(rep(c("-"), times = 40, quote = F), "\n")
+print(ds) 
+cat(" ", "\n")
+
+a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = UnrHead) 
+print(summary(a.h.relunrel)) 
+
+
+sink()
+
+# PROPERTY ITEMS ==========================================================================
+
+rm(list = ls()) 
+library(languageR) 
+library(reshape2)
+library(plyr)
+library(stringr)
+
+f1vtimeout <- read.table("data/vtimeoutc.txt", header = F) 
+colnames(f1vtimeout) <- c("subj", "item", "subexp", "headrel", "localrel", "vtime")
+
+d.prop         <- subset(f1vtimeout, subexp == "Attr")
+d.prop.base    <- subset(f1vtimeout, subexp == "Attr")
+
+
+# PROP: Collapse over subject
+d.prop$unique.id <- paste(d.prop[, 1], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
+d.prop           <- ddply(d.prop, "unique.id", function(X) data.frame(vtime = mean(X$vtime)))
+vtime            <- data.frame(d.prop$vtime)
+d.prop           <- colsplit(d.prop$unique.id, "_", c("subj", "subexp", "headrel", "localrel"))
+d.prop$subj      <- as.factor(d.prop$subj)
+d.prop           <- cbind(d.prop,vtime)
+colnames(d.prop)[5] <- "vtime"
+rm(vtime)
+
+# PROP: All subjects subsetting
+HeadN.base         <- subset(d.prop.base, headrel   ==  "HeadN") 
+UnrHead.base       <- subset(d.prop.base, headrel   ==  "UnrHead")
+NRel.base          <- subset(d.prop.base, localrel  ==  "NRel") 
+NUnr.base          <- subset(d.prop.base, localrel  ==  "NUnr") 
+NAssc.base         <- subset(d.prop.base, localrel  ==  "NAssc")
+HeadN.NRel.base    <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NRel") 
+HeadN.NUnr.base    <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NUnr")
+HeadN.NAssc.base   <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NAssc")
+UnrHead.NRel.base  <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
+UnrHead.NUnr.base  <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
+UnrHead.NAssc.base <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NAssc")
+# ----
+HeadN.Rel.Un.base      <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NRel" & localrel  ==  "NUnr") 
+UnrHead.Rel.Un.base    <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NRel" & localrel  ==  "NUnr")
+HeadN.Ass.Un.base      <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NAssc" & localrel  ==  "NUnr") 
+UnrHead.Ass.Un.base    <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NAssc" & localrel  ==  "NUnr")
+HeadN.Rel.Ass.base      <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NAssc" & localrel  ==  "NRel") 
+UnrHead.Rel.Ass.base    <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NAssc" & localrel  ==  "NRel")
+
+# PROP: Collapsed subjects subsetting
+HeadN         <- subset(d.prop, headrel   ==  "HeadN") 
+UnrHead       <- subset(d.prop, headrel   ==  "UnrHead")
+NRel          <- subset(d.prop, localrel  ==  "NRel") 
+NUnr          <- subset(d.prop, localrel  ==  "NUnr") 
+NAssc         <- subset(d.prop, localrel  ==  "NAssc")
+HeadN.NRel    <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NRel") 
+HeadN.NUnr    <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NUnr")
+HeadN.NAssc   <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NAssc")
+UnrHead.NRel  <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
+UnrHead.NUnr  <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
+UnrHead.NAssc <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NAssc")
+# ----
+HeadN.Rel.Un      <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NRel" & localrel  ==  "NUnr") 
+UnrHead.Rel.Un    <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NRel" & localrel  ==  "NUnr")
+HeadN.Ass.Un      <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NAssc" & localrel  ==  "NUnr") 
+UnrHead.Ass.Un    <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NAssc" & localrel  ==  "NUnr")
+HeadN.Rel.Ass      <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NAssc" & localrel  ==  "NRel") 
+UnrHead.Rel.Ass    <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NAssc" & localrel  ==  "NRel")
+
+ds <- data.frame(data = c(
+  "Grand Mean",
+  "HeadN",
+  "UnrHead",
+  "NRel",
+  "NAssc",
+  "NUnr",
+  "HeadN-NRel",
+  "NeadN-NAssc",
+  "HeadN-NUnr",
+  "UnrHead-NRel",
+  "UnrHead-NAssc",
+  "UnrHead-NUnr"),
+  
+  n = c(length(d.prop.base$vtime),
+        length(HeadN.base$vtime), 
+        length(UnrHead.base$vtime),
+        length(NRel.base$vtime), 
+        length(NAssc.base$vtime), 
+        length(NUnr.base$vtime), 
+        length(HeadN.NRel.base$vtime),
+        length(HeadN.NAssc.base$vtime),
+        length(HeadN.NUnr.base$vtime),
+        length(UnrHead.NRel.base$vtime),
+        length(UnrHead.NAssc.base$vtime),
+        length(UnrHead.NUnr.base$vtime)),
+  
+  N = c(length(d.prop$vtime),
+        length(HeadN$vtime), 
+        length(UnrHead$vtime),
+        length(NRel$vtime), 
+        length(NAssc$vtime), 
+        length(NUnr$vtime), 
+        length(HeadN.NRel$vtime),
+        length(HeadN.NAssc$vtime),
+        length(HeadN.NUnr$vtime),
+        length(UnrHead.NRel$vtime),
+        length(UnrHead.NAssc$vtime),
+        length(UnrHead.NUnr$vtime)),
+  
+  mean = c(mean(d.prop$vtime),
+           mean(HeadN$vtime), 
+           mean(UnrHead$vtime),
+           mean(NRel$vtime), 
+           mean(NAssc$vtime), 
+           mean(NUnr$vtime), 
+           mean(HeadN.NRel$vtime),
+           mean(HeadN.NAssc$vtime),
+           mean(HeadN.NUnr$vtime),
+           mean(UnrHead.NRel$vtime),
+           mean(UnrHead.NAssc$vtime),
+           mean(UnrHead.NUnr$vtime)),
+  
+  sd = c(sd(d.prop$vtime),
+         sd(HeadN$vtime), 
+         sd(UnrHead$vtime),
+         sd(NRel$vtime), 
+         sd(NAssc$vtime), 
+         sd(NUnr$vtime), 
+         sd(HeadN.NRel$vtime),
+         sd(HeadN.NAssc$vtime),
+         sd(HeadN.NUnr$vtime),
+         sd(UnrHead.NRel$vtime),
+         sd(UnrHead.NAssc$vtime),
+         sd(UnrHead.NUnr$vtime)),
+  
+  se = c(
+    sd(d.prop$vtime)         / sqrt(length(d.prop$vtime)),
+    sd(HeadN$vtime)         / sqrt(length(HeadN$vtime)), 
+    sd(UnrHead$vtime)       / sqrt(length(UnrHead$vtime)),
+    sd(NRel$vtime)          / sqrt(length(NRel$vtime)),
+    sd(NAssc$vtime)         / sqrt(length(NAssc$vtime)), 
+    sd(NUnr$vtime)          / sqrt(length(NUnr$vtime)), 
+    sd(HeadN.NRel$vtime)    / sqrt(length(HeadN.NRel$vtime)),
+    sd(HeadN.NAssc$vtime)   / sqrt(length(HeadN.NAssc$vtime)),
+    sd(HeadN.NUnr$vtime)    / sqrt(length(HeadN.NUnr$vtime)),
+    sd(UnrHead.NRel$vtime)  / sqrt(length(UnrHead.NRel$vtime)),
+    sd(UnrHead.NAssc$vtime)  /sqrt(length(UnrHead.NAssc$vtime)),
+     sd(UnrHead.NUnr$vtime)  / sqrt(length(UnrHead.NUnr$vtime))  
+  ))
+
+# PROP: All 2X2 ANOVA-----------------------------------------------------
+
+sink("output/Reprime Property F1 Factorial Analyses.txt")
+
+cat(" ", "\n")
+cat("BY-SUBJECTS FACTORIAL ANALYSES RUN ON: ", format(Sys.time(), "%b. %d, %Y at %T"), sep = "", fill= 70)
+cat(" ", "\n")
 cat(rep(c("-"), times=40, quote=F),"\n")
-cat("RELATED HEAD vs. UNRELATED HEAD", sep = "", fill = 60)
+cat("2X2 ANOVA: PROPERTY ITEMS", sep = "", fill = 60)
 cat(rep(c("-"), times=40, quote=F), "\n")
 print(ds) 
 cat(" ", "\n")
 
-a.rhunrh <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.cat) 
-print(summary(a.rhunrh)) 
-cat(" ", "\n")
-cat(" ", "\n")
 
-# -------------------------RELATED ITEMS ANALYSES------------------------------
-
-ds.relat <- data.frame(data = c("n2num","plur","sing"),
-                       
-                       n = c(length(relat$error),
-                             length(relat.plur$error),
-                             length(relat.sing$error)),
-                       
-                       N = c(length(relat$error),
-                             length(relat.plur$error),
-                             length(relat.sing$error)),
-                       
-                       mean = c(mean(relat$error),
-                                mean(relat.plur$error),
-                                mean(relat.sing$error)),
-                       
-                       sd = c(sd(relat$error),
-                              sd(relat.plur$error),
-                              sd(relat.sing$error)),
-                       
-                       se = c(sd(relat$error) / sqrt(length(relat$error)),
-                              sd(relat.plur$error) / sqrt(length(relat.plur$error)),
-                              sd(relat.sing$error) / sqrt(length(relat.sing$error))))
-
-
-cat(">>>  RELATED ITEMS PAIRED COMPARISONS", sep = "", fill = 60)
-cat(rep(c("-"), times=25, quote=F), "\n")
-print(ds.relat) 
-cat(" ", "\n")
-
-a.relat <- aov(error ~ n2num + Error(subj / n2num), data = relat) 
-print(summary(a.relat)) 
-cat(" ", "\n")
-cat(" ", "\n")
-#------------------------------UNRELATED PAIRED COMPARISION----------------
-ds.unrel <- data.frame(data = c("n2num", "plur", "sing"),
-                       
-                       n = c(length(unrel$error),
-                             length(unrel.plur$error),
-                             length(unrel.sing$error)),
-                       
-                       N = c(length(unrel$error),
-                             length(unrel.plur$error),
-                             length(unrel.sing$error)),
-                       
-                       mean = c(mean(unrel$error),
-                                mean(unrel.plur$error),
-                                mean(unrel.sing$error)),
-                       
-                       sd = c(sd(unrel$error),
-                              sd(unrel.plur$error),
-                              sd(unrel.sing$error)),
-                       
-                       se = c(sd(unrel$error) / sqrt(length(unrel$error)),
-                              sd(unrel.plur$error) / sqrt(length(unrel.plur$error)),
-                              sd(unrel.sing$error) / sqrt(length(unrel.sing$error)))) 
-
-cat(">>>  UNRELATED ITEMS PAIRED COMPARISONS", sep = "", fill = 60)
-cat(rep(c("-"), times=25, quote=F), "\n")
-print(ds.unrel) 
-cat(" ", "\n")
-
-a.unrel <- aov(error ~ n2num + Error(subj / n2num), data = unrel) 
-print(summary(a.unrel))
-cat(" ", "\n")
-cat(" ", "\n")
-
-
-#==========================================================================================================
-#
-# ----------------------------INTEGRATED - UNINTEGRATED PAIRED COMPARISONS --------------------------------
-#
-
-f1errout <- read.table("data/SR_F1_errint.txt", header = T)  # reads in data 
-d <- f1errout 
-d$subj <- as.factor(d$subj)  
-d$pct <- ifelse(d$errd == 0 & d$errcord == 0, 0, (d$errd / (d$errcord)) * 100) 
-data.subj <- aggregate(d$pct, list(d$subj, d$semint, d$related, d$n2num ), mean) 
-colnames(data.subj) <- c("subj", "semint", "related", "n2num", "error") 
-
-integ      <- subset(data.subj, semint == "integ") 
-unint      <- subset(data.subj, semint == "unint") 
-sing       <- subset(data.subj, n2num  == "sing") 
-plur       <- subset(data.subj, n2num  == "plur") 
-integ.plur <- subset(data.subj, semint == "integ" & n2num == "plur") 
-integ.sing <- subset(data.subj, semint == "integ" & n2num == "sing")
-unint.plur <- subset(data.subj, semint == "unint" & n2num == "plur")
-unint.sing <- subset(data.subj, semint == "unint" & n2num == "sing")
-
-ds <- data.frame(data = c(
-  "gmean",
-  "integ",
-  "unint",
-  "plur",
-  "sing",
-  "intplur",
-  "intsing",
-  "unintplur",
-  "unintsing"
-),
-
-n = c(length(data.subj$error),
-      length(integ$error),
-      length(unint$error),
-      length(plur$error),
-      length(sing$error),
-      length(integ.plur$error),
-      length(integ.sing$error),
-      length(unint.plur$error),
-      length(unint.sing$error)
-),
-
-N = c(length(data.subj$error),
-      length(integ$error),
-      length(unint$error),
-      length(plur$error),  
-      length(sing$error),
-      length(integ.plur$error),  
-      length(integ.sing$error),
-      length(unint.plur$error),
-      length(unint.sing$error)
-),
-
-mean = c(mean(data.subj$error),
-         mean(integ$error),
-         mean(unint$error),
-         mean(plur$error),
-         mean(sing$error),
-         mean(integ.plur$error),
-         mean(integ.sing$error),
-         mean(unint.plur$error),
-         mean(unint.sing$error)
-),
-
-sd = c(sd(data.subj$error),
-       sd(integ$error),
-       sd(unint$error),
-       sd(plur$error),
-       sd(sing$error),
-       sd(integ.plur$error),
-       sd(integ.sing$error),
-       sd(unint.plur$error),
-       sd(unint.sing$error)
-),
-
-se = c(sd(data.subj$error) / sqrt(length(data.subj$error)),
-       sd(integ$error) / sqrt(length(integ$error)),
-       sd(unint$error) / sqrt(length(unint$error)),
-       sd(plur$error) / sqrt(length(plur$error)),
-       sd(sing$error) / sqrt(length(sing$error)),
-       sd(integ.plur$error) / sqrt(length(integ.plur$error)),
-       sd(integ.sing$error) / sqrt(length(integ.sing$error)),
-       sd(unint.plur$error) / sqrt(length(unint.plur$error)),
-       sd(unint.sing$error) / sqrt(length(unint.sing$error)) 
-       
-))
-
-cat(rep(c("-"), times=40, quote=F),"\n")
-cat("INTEGRATED ITEMS ANALYSES", sep = "", fill = 60)
-cat(rep(c("-"), times=40, quote=F), "\n")
-print(ds)  
-cat(" ", "\n")
-
-a.2x2 <- aov(error ~ semint * n2num + Error(subj / (semint * n2num)), data = data.subj)  # 2x2 anova
+a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.prop)
 print(summary(a.2x2)) 
 cat(" ", "\n")
 cat(" ", "\n")
 
-#
-# -----------------------INTEGRATED PAIRED COMPARISONS------------------------------------------------------
-#
+# PROP: (NRel vs. NUnrel) -------------------------------------------------------------------------------
+rm(list = ls()) 
+library(languageR) 
+library(reshape2)
+library(plyr)
+library(stringr)
 
-ds.integ <- data.frame(data = c("n2num", "plur", "sing"),
-                       
-                       n = c(length(integ$error),
-                             length(integ.plur$error),
-                             length(integ.sing$error)),
-                       
-                       N = c(length(integ$error),
-                             length(integ.plur$error),
-                             length(integ.sing$error)),
-                       
-                       mean = c(mean(integ$error),
-                                mean(integ.plur$error),
-                                mean(integ.sing$error)),
-                       
-                       sd = c(sd(integ$error),
-                              sd(integ.plur$error),
-                              sd(integ.sing$error)),
-                       
-                       se = c(sd(integ$error) / sqrt(length(integ$error)),
-                              sd(integ.plur$error) / sqrt(length(integ.plur$error)),
-                              sd(integ.sing$error) / sqrt(length(integ.sing$error)))) 
+f1vtimeout <- read.table("data/vtimeoutc.txt", header = F) 
+colnames(f1vtimeout) <- c("subj", "item", "subexp", "headrel", "localrel", "vtime")
 
-cat(">>>  INTEGRATED ITEMS PAIRED COMPARISONS", sep = "", fill = 60)
-cat(rep(c("-"), times=25, quote=F), "\n")
-print(ds.integ) 
-cat(" ", "\n")
+d.prop         <- subset(f1vtimeout, subexp == "Attr")
+d.prop.base    <- subset(f1vtimeout, subexp == "Attr")
+d.prop         <- subset(d.prop, localrel != "NAssc")
+d.prop.base    <- subset(d.prop, localrel != "NAssc")
 
+# PROP (Rel vs. Unr): Collapse over subject
+d.prop$unique.id <- paste(d.prop[, 1], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
+d.prop           <- ddply(d.prop, "unique.id", function(X) data.frame(vtime = mean(X$vtime)))
+vtime            <- data.frame(d.prop$vtime)
+d.prop           <- colsplit(d.prop$unique.id, "_", c("subj", "subexp", "headrel", "localrel"))
+d.prop$subj      <- as.factor(d.prop$subj)
+d.prop           <- cbind(d.prop,vtime)
+colnames(d.prop)[5] <- "vtime"
+rm(vtime)
 
-a.integ <- aov(error ~ n2num + Error(subj / n2num), data = integ) 
-print(summary(a.integ)) 
-cat(" ", "\n")
-cat(" ", "\n")
-#
-#----------------------UNINTEGRATED PAIRED COMPARISONS--------------------------------------------------
-#
-
-ds.uninteg <- data.frame(data = c("n2num", "plur", "sing"),
-                         
-                         n = c(length(unint$error),
-                               length(unint.plur$error),
-                               length(unint.sing$error)),
-                         
-                         N = c(length(unint$error),
-                               length(unint.plur$error),
-                               length(unint.sing$error)),
-                         
-                         mean = c(mean(unint$error),
-                                  mean(unint.plur$error),
-                                  mean(unint.sing$error)),
-                         
-                         sd = c(sd(unint$error),
-                                sd(unint.plur$error),
-                                sd(unint.sing$error)),
-                         
-                         se = c(sd(unint$error) / sqrt(length(unint$error)),
-                                sd(unint.plur$error) / sqrt(length(unint.plur$error)),
-                                sd(unint.sing$error) / sqrt(length(unint.sing$error)))) 
-
-cat(">>>  UNINTEGRATED ITEMS PAIRED COMPARISONS", sep = "", fill = 60)
-cat(rep(c("-"), times=25, quote=F), "\n")
-print(ds.uninteg) 
-cat(" ", "\n")
-
-a.uninteg <- aov(error ~ n2num + Error(subj / n2num), data = unint)
-print(summary(a.uninteg)) 
-cat(" ", "\n")
-cat(" ", "\n")
+# PROP (Rel vs. Unr): All subjects subsetting
+HeadN.base         <- subset(d.prop.base, headrel   ==  "HeadN") 
+UnrHead.base       <- subset(d.prop.base, headrel   ==  "UnrHead")
+NRel.base          <- subset(d.prop.base, localrel  ==  "NRel") 
+NUnr.base          <- subset(d.prop.base, localrel  ==  "NUnr") 
+HeadN.NRel.base    <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NRel") 
+HeadN.NUnr.base    <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NUnr")
+UnrHead.NRel.base  <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
+UnrHead.NUnr.base  <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
+# ----
 
 
-# ---------------------------------------Paired comparisions for each condition------------------
-#
+# PROP (Rel vs. Unr): Collapsed subjects subsetting
+HeadN         <- subset(d.prop, headrel   ==  "HeadN") 
+UnrHead       <- subset(d.prop, headrel   ==  "UnrHead")
+NRel          <- subset(d.prop, localrel  ==  "NRel") 
+NUnr          <- subset(d.prop, localrel  ==  "NUnr") 
+HeadN.NRel    <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NRel") 
+HeadN.NUnr    <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NUnr")
+UnrHead.NRel  <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
+UnrHead.NUnr  <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
 
-f1errout <- read.table("data/SR_F1_errordata.txt", header = T) 
-d <- f1errout 
-d$subj <- as.factor(d$subj) 
-d$pct <- ifelse(d$errd == 0 & d$errcord == 0, 0, (d$errd / (d$errcord))*100) 
-data.subj <- aggregate(d$pct, list(d$subj, d$semint, d$related, d$n2num ), mean) 
-colnames(data.subj) <- c("subj", "semint", "related", "n2num", "error")
+# ----
+ds <- data.frame(data = c(
+  "Grand Mean",
+  "HeadN",
+  "UnrHead",
+  "NRel",
+  "NUnr",
+  "HeadN-NRel",
+  "HeadN-NUnr",
+  "UnrHead-NRel",
+  "UnrHead-NUnr"),
+  
+  n = c(length(d.prop.base$vtime),
+        length(HeadN.base$vtime), 
+        length(UnrHead.base$vtime),
+        length(NRel.base$vtime), 
+        length(NUnr.base$vtime), 
+        length(HeadN.NRel.base$vtime),
+        length(HeadN.NUnr.base$vtime),
+        length(UnrHead.NRel.base$vtime),
+        length(UnrHead.NUnr.base$vtime)),
+  
+  N = c(length(d.prop$vtime),
+        length(HeadN$vtime), 
+        length(UnrHead$vtime),
+        length(NRel$vtime), 
+        length(NUnr$vtime), 
+        length(HeadN.NRel$vtime),
+        length(HeadN.NUnr$vtime),
+        length(UnrHead.NRel$vtime),
+        length(UnrHead.NUnr$vtime)),
+  
+  mean = c(mean(d.prop$vtime),
+           mean(HeadN$vtime), 
+           mean(UnrHead$vtime),
+           mean(NRel$vtime), 
+           mean(NUnr$vtime), 
+           mean(HeadN.NRel$vtime),
+           mean(HeadN.NUnr$vtime),
+           mean(UnrHead.NRel$vtime),
+           mean(UnrHead.NUnr$vtime)),
+  
+  sd = c(sd(d.prop$vtime),
+         sd(HeadN$vtime), 
+         sd(UnrHead$vtime),
+         sd(NRel$vtime), 
+         sd(NUnr$vtime), 
+         sd(HeadN.NRel$vtime),
+         sd(HeadN.NUnr$vtime),
+         sd(UnrHead.NRel$vtime),
+         sd(UnrHead.NUnr$vtime)),
+  
+  se = c(
+    sd(d.prop$vtime)         / sqrt(length(d.prop$vtime)),
+    sd(HeadN$vtime)         / sqrt(length(HeadN$vtime)), 
+    sd(UnrHead$vtime)       / sqrt(length(UnrHead$vtime)),
+    sd(NRel$vtime)          / sqrt(length(NRel$vtime)),
+    sd(NUnr$vtime)          / sqrt(length(NUnr$vtime)), 
+    sd(HeadN.NRel$vtime)    / sqrt(length(HeadN.NRel$vtime)),
+    sd(HeadN.NUnr$vtime)    / sqrt(length(HeadN.NUnr$vtime)),
+    sd(UnrHead.NRel$vtime)  / sqrt(length(UnrHead.NRel$vtime)),
+    sd(UnrHead.NUnr$vtime)  / sqrt(length(UnrHead.NUnr$vtime))  
+  ))
 
-# ----------------Integrated Related paired----------------------
-integ.relat    <- subset(data.subj, semint  == "integ" & related == "rel") 
-relat.int.plur <- subset(data.subj, related == "rel"   & semint  == "integ" & n2num == "plur") 
-relat.int.sing <- subset(data.subj, related == "rel"   & semint  == "integ" & n2num == "sing") 
-
-ds.integrel <- data.frame(data = c("n2num","plur","sing"),
-                          
-                          n = c(length(integ.relat$error),
-                                length(relat.int.plur$error),
-                                length(relat.int.sing$error)),
-                          
-                          N = c(length(integ.relat$error),
-                                length(relat.int.plur$error),
-                                length(relat.int.sing$error)),
-                          
-                          mean = c(mean(integ.relat$error),
-                                   mean(relat.int.plur$error),
-                                   mean(relat.int.sing$error)),
-                          
-                          sd = c(sd(integ.relat$error),
-                                 sd(relat.int.plur$error),
-                                 sd(relat.int.sing$error)),
-                          
-                          se = c(sd(integ.relat$error) / sqrt(length(integ.relat$error)),
-                                 sd(relat.int.plur$error) / sqrt(length(relat.int.plur$error)),
-                                 sd(relat.int.sing$error) / sqrt(length(relat.int.sing$error)))) 
 
 cat(rep(c("-"), times=40, quote=F),"\n")
-cat("VARIOUS PAIRED COMBINATIONS", sep = "", fill = 60)
+cat("RELATED vs. UNRELATED HEAD", sep = "", fill = 60)
 cat(rep(c("-"), times=40, quote=F), "\n")
+print(ds) 
 cat(" ", "\n")
 
-cat(">>>  INTEGRATED -RELATED PAIRED COMPARISONS", sep = "", fill = 60)
-cat(rep(c("-"), times=25, quote=F), "\n")
-print(ds.integrel) 
-print(rep(c("-"), times = 50), quote = F)
-cat(" ", "\n")
 
-a.integrel <- aov(error ~ n2num + Error(subj / n2num), data = integ.relat) 
-print(summary(a.integrel))
-
-#-------------------Integrated Unrelated paired--------------------
-integ.unrel    <- subset(data.subj, semint  == "integ" & related == "unrel") 
-unrel.int.plur <- subset(data.subj, related == "unrel" & semint  == "integ" & n2num == "plur") 
-unrel.int.sing <- subset(data.subj, related == "unrel" & semint  == "integ" & n2num == "sing") 
-
-ds.integunrel <- data.frame(data = c("n2num", "plur", "sing"),
-                            
-                            n = c(length(integ.unrel$error),
-                                  length(unrel.int.plur$error),
-                                  length(unrel.int.sing$error)),
-                            
-                            N = c(length(integ.unrel$error),
-                                  length(unrel.int.plur$error),
-                                  length(unrel.int.sing$error)),
-                            
-                            mean = c(mean(integ.unrel$error),
-                                     mean(unrel.int.plur$error),
-                                     mean(unrel.int.sing$error)),
-                            
-                            sd = c(sd(integ.unrel$error),
-                                   sd(unrel.int.plur$error),
-                                   sd(unrel.int.sing$error)),
-                            
-                            se = c(sd(integ.unrel$error) / sqrt(length(integ.unrel$error)),
-                                   sd(unrel.int.plur$error) / sqrt(length(unrel.int.plur$error)),
-                                   sd(unrel.int.sing$error) / sqrt(length(unrel.int.sing$error)))) 
-
-cat(">>>  INTEGRATED -UNRELATED PAIRED COMPARISONS", sep = "", fill = 60)
-cat(rep(c("-"), times=25, quote=F), "\n")
-print(ds.integunrel)
-cat(" ", "\n")
-
-a.integunrel <- aov(error ~ n2num + Error(subj / n2num), data = integ.unrel) 
-print(summary(a.integunrel)) 
-cat(" ", "\n")
-cat(" ", "\n")
-
-# ----------------------Uninegrated Related paired-------------------------
-unint.relat      <- subset(data.subj, semint  == "unint" & related == "rel") 
-relat.unint.plur <- subset(data.subj, related == "rel"   & semint  == "unint" & n2num == "plur") 
-relat.unint.sing <- subset(data.subj, related == "rel"   & semint  == "unint" & n2num == "sing") 
-
-ds.unintrel <- data.frame(data = c("n2num", "plur", "sing"),
-                          
-                          n = c(length(unint.relat$error),
-                                length(relat.unint.plur$error),
-                                length(relat.unint.sing$error)),
-                          
-                          N = c(length(unint.relat$error),
-                                length(relat.unint.plur$error),
-                                length(relat.unint.sing$error)),
-                          
-                          mean = c(mean(unint.relat$error),
-                                   mean(relat.unint.plur$error),
-                                   mean(relat.unint.sing$error)),
-                          
-                          sd = c(sd(unint.relat$error),
-                                 sd(relat.unint.plur$error),
-                                 sd(relat.unint.sing$error)),
-                          
-                          se = c(sd(unint.relat$error) / sqrt(length(unint.relat$error)),
-                                 sd(relat.unint.plur$error) / sqrt(length(relat.unint.plur$error)),
-                                 sd(relat.unint.sing$error) / sqrt(length(relat.unint.sing$error)))) 
-
-cat(">>>  UNINTEGRATED - RELATED PAIRED COMPARISONS", sep = "", fill = 60)
-cat(rep(c("-"), times=25, quote=F), "\n")
-print(ds.unintrel) 
-cat(" ", "\n")
-a.unintrel <- aov(error ~ n2num + Error(subj / n2num), data = unint.relat) 
-print(summary(a.unintrel)) 
-cat(" ", "\n")
-cat(" ", "\n")
-
-# -------------------------Unintegrated Unrelated comparisons-------------------
-unint.unrel      <- subset(data.subj, semint  == "unint" & related == "unrel") 
-unrel.unint.plur <- subset(data.subj, related == "unrel" & semint  == "unint" & n2num == "plur")
-unrel.unint.sing <- subset(data.subj, related == "unrel" & semint  == "unint" & n2num == "sing")
-
-ds.unintunrel <- data.frame(data=c("n2num","plur","sing"),
-                            
-                            n = c(length(unint.unrel$error),
-                                  length(unrel.unint.plur$error),
-                                  length(unrel.unint.sing$error)),
-                            
-                            N = c(length(unint.unrel$error),
-                                  length(unrel.unint.plur$error),
-                                  length(unrel.unint.sing$error)),
-                            
-                            mean = c(mean(unint.unrel$error),
-                                     mean(unrel.unint.plur$error),
-                                     mean(unrel.unint.sing$error)),
-                            
-                            sd = c(sd(unint.unrel$error),
-                                   sd(unrel.unint.plur$error),
-                                   sd(unrel.unint.sing$error)),
-                            
-                            se = c(sd(unint.unrel$error) / sqrt(length(unint.unrel$error)),
-                                   sd(unrel.unint.plur$error) / sqrt(length(unrel.unint.plur$error)),
-                                   sd(unrel.unint.sing$error) / sqrt(length(unrel.unint.sing$error))))
-
-cat(">>>  UNINTEGRATED - UNRELATED PAIRED COMPARISONS", sep = "", fill = 60)
-cat(rep(c("-"), times=25, quote=F), "\n")
-print(ds.unintunrel) 
-cat(" ", "\n")
-
-a.unintunrel <- aov(error ~ n2num + Error(subj / n2num), data = unint.unrel) 
-print(summary(a.unintunrel)) 
+a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.prop)
+print(summary(a.2x2)) 
 cat(" ", "\n")
 cat(" ", "\n")
 
 
+# PROP: RelHead (NRel vs. NUnr)----------------
 
+ds.relhead <- data.frame(data = c(
+  "HNoun",
+  "NRel",
+  "NUnrel"),
+  
+  n = c(length(HeadN.base$vtime),
+        length(NRel.base$vtime), 
+         length(NUnr.base$vtime)),
+  
+  N = c(length(HeadN$vtime),
+        length(HeadN.NRel$vtime),
+        length(HeadN.NUnr$vtime)),
+  
+  mean = c(mean(HeadN$vtime),
+           mean(HeadN.NRel$vtime),
+           mean(HeadN.NUnr$vtime)),
+  
+  sd = c(sd(HeadN$vtime),
+         sd(HeadN.NRel$vtime),
+         sd(HeadN.NUnr$vtime)),
+  
+  se = c(sd(HeadN$vtime)       / sqrt(length(HeadN$vtime)),
+         sd(HeadN.NRel$vtime)  / sqrt(length(HeadN.NRel$vtime)),
+         sd(HeadN.NUnr$vtime)  / sqrt(length(HeadN.NUnr$vtime))
+  ))
+
+cat("\n")
+cat("RELATED HEAD: NRel vs. NUnrel", sep = "", fill = 60)
+cat(rep(c("-"), times = 40, quote = F), "\n")
+print(ds.relhead) 
+cat(" ", "\n")
+
+a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = HeadN) 
+print(summary(a.h.relunrel)) 
+cat(" ", "\n")
+cat(" ", "\n")
+
+
+# PROP: UnrelHead (NRel vs. NUnr)----------------
+
+ds.unrel <- data.frame(data = c(
+  "UnrHead",
+  "NRel",
+  "NUnrel"),
+  
+  n = c(length(UnrHead.base$vtime),
+        length(NRel.base$vtime), 
+        length(NUnr.base$vtime)),
+  
+  N = c(length(UnrHead$vtime),
+        length(UnrHead.NRel$vtime),
+        length(UnrHead.NUnr$vtime)),
+  
+  mean = c(mean(UnrHead$vtime),
+           mean(UnrHead.NRel$vtime),
+           mean(UnrHead.NUnr$vtime)),
+  
+  sd = c(sd(UnrHead$vtime),
+         sd(UnrHead.NRel$vtime),
+         sd(UnrHead.NUnr$vtime)),
+  
+  se = c(sd(UnrHead$vtime)       / sqrt(length(UnrHead$vtime)),
+         sd(UnrHead.NRel$vtime)  / sqrt(length(UnrHead.NRel$vtime)),
+         sd(UnrHead.NUnr$vtime)  / sqrt(length(UnrHead.NUnr$vtime))
+  ))
+
+cat("\n")
+cat("UNRELATED HEAD: NRel vs. NUnrel", sep = "", fill = 60)
+cat(rep(c("-"), times = 40, quote = F), "\n")
+print(ds.unrel) 
+cat(" ", "\n")
+
+a.uh.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = UnrHead) 
+print(summary(a.uh.relunrel)) 
+cat(" ", "\n")
+cat(" ", "\n")
+#--------------------------------------------
+# PROP: (Assc vs. Unrel)
+rm(list = ls()) 
+library(languageR) 
+library(reshape2)
+library(plyr)
+library(stringr)
+
+f1vtimeout <- read.table("data/vtimeoutc.txt", header = F) 
+colnames(f1vtimeout) <- c("subj", "item", "subexp", "headrel", "localrel", "vtime")
+
+d.prop         <- subset(f1vtimeout, subexp == "Attr")
+d.prop.base    <- subset(f1vtimeout, subexp == "Attr")
+d.prop         <- subset(d.prop, localrel != "NRel")
+d.prop.base    <- subset(d.prop, localrel != "NRel")
+
+# PROP (Assc vs. Unr): Collapse over subject
+d.prop$unique.id <- paste(d.prop[, 1], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
+d.prop           <- ddply(d.prop, "unique.id", function(X) data.frame(vtime = mean(X$vtime)))
+vtime            <- data.frame(d.prop$vtime)
+d.prop           <- colsplit(d.prop$unique.id, "_", c("subj", "subexp", "headrel", "localrel"))
+d.prop$subj      <- as.factor(d.prop$subj)
+d.prop           <- cbind(d.prop,vtime)
+colnames(d.prop)[5] <- "vtime"
+rm(vtime)
+
+# PROP (Assc vs. Unr): All subjects subsetting
+HeadN.base         <- subset(d.prop.base, headrel   ==  "HeadN") 
+UnrHead.base       <- subset(d.prop.base, headrel   ==  "UnrHead")
+NUnr.base          <- subset(d.prop.base, localrel  ==  "NUnr") 
+NAssc.base         <- subset(d.prop.base, localrel  ==  "NAssc")
+HeadN.NUnr.base    <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NUnr")
+HeadN.NAssc.base   <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NAssc")
+UnrHead.NUnr.base  <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
+UnrHead.NAssc.base <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NAssc")
+# ----
+
+
+# PROP (Assc vs. Unr): Collapsed subjects subsetting
+HeadN         <- subset(d.prop, headrel   ==  "HeadN") 
+UnrHead       <- subset(d.prop, headrel   ==  "UnrHead")
+NUnr          <- subset(d.prop, localrel  ==  "NUnr") 
+NAssc         <- subset(d.prop, localrel  ==  "NAssc")
+HeadN.NUnr    <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NUnr")
+HeadN.NAssc   <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NAssc")
+UnrHead.NUnr  <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
+UnrHead.NAssc <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NAssc")
+# ----
+ds <- data.frame(data = c(
+  "Grand Mean",
+  "HeadN",
+  "UnrHead",
+  "NAssc",
+  "NUnr",
+  "HeadN-NAssc",
+  "HeadN-NUnr",
+  "UnrHead-NAssc",
+  "UnrHead-NUnr"),
+  
+  n = c(length(d.prop.base$vtime),
+        length(HeadN.base$vtime), 
+        length(UnrHead.base$vtime),
+        length(NAssc.base$vtime), 
+        length(NUnr.base$vtime), 
+        length(HeadN.NAssc.base$vtime),
+        length(HeadN.NUnr.base$vtime),
+        length(UnrHead.NAssc.base$vtime),
+        length(UnrHead.NUnr.base$vtime)),
+  
+  N = c(length(d.prop$vtime),
+        length(HeadN$vtime), 
+        length(UnrHead$vtime),
+        length(NAssc$vtime), 
+        length(NUnr$vtime), 
+        length(HeadN.NAssc$vtime),
+        length(HeadN.NUnr$vtime),
+        length(UnrHead.NAssc$vtime),
+        length(UnrHead.NUnr$vtime)),
+  
+  mean = c(mean(d.prop$vtime),
+           mean(HeadN$vtime), 
+           mean(UnrHead$vtime),
+           mean(NAssc$vtime), 
+           mean(NUnr$vtime), 
+           mean(HeadN.NAssc$vtime),
+           mean(HeadN.NUnr$vtime),
+           mean(UnrHead.NAssc$vtime),
+           mean(UnrHead.NUnr$vtime)),
+  
+  sd = c(sd(d.prop$vtime),
+         sd(HeadN$vtime), 
+         sd(UnrHead$vtime),
+         sd(NAssc$vtime), 
+         sd(NUnr$vtime), 
+         sd(HeadN.NAssc$vtime),
+         sd(HeadN.NUnr$vtime),
+         sd(UnrHead.NAssc$vtime),
+         sd(UnrHead.NUnr$vtime)),
+  
+  se = c(
+    sd(d.prop$vtime)         / sqrt(length(d.prop$vtime)),
+    sd(HeadN$vtime)         / sqrt(length(HeadN$vtime)), 
+    sd(UnrHead$vtime)       / sqrt(length(UnrHead$vtime)),
+    sd(NAssc$vtime)          / sqrt(length(NAssc$vtime)),
+    sd(NUnr$vtime)          / sqrt(length(NUnr$vtime)), 
+    sd(HeadN.NAssc$vtime)    / sqrt(length(HeadN.NAssc$vtime)),
+    sd(HeadN.NUnr$vtime)    / sqrt(length(HeadN.NUnr$vtime)),
+    sd(UnrHead.NAssc$vtime)  / sqrt(length(UnrHead.NAssc$vtime)),
+    sd(UnrHead.NUnr$vtime)  / sqrt(length(UnrHead.NUnr$vtime))  
+  ))
+
+
+cat(rep(c("-"), times=40, quote=F),"\n")
+cat("ASSOCIATED vs. UNRELATED HEAD", sep = "", fill = 60)
+cat(rep(c("-"), times=40, quote=F), "\n")
+print(ds) 
+cat(" ", "\n")
+# 
+# 
+# a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.prop)
+# print(summary(a.2x2)) 
+# cat(" ", "\n")
+# cat(" ", "\n")
+
+
+# PROP: RelHead (NAssc vs. NUnr)----------------
+
+ds.relhead <- data.frame(data = c(
+  "HNoun",
+  "NAssc",
+  "NUnrel"),
+  
+  n = c(length(HeadN.base$vtime),
+        length(NAssc.base$vtime), 
+        length(NUnr.base$vtime)),
+  
+  N = c(length(HeadN$vtime),
+        length(HeadN.NAssc$vtime),
+        length(HeadN.NUnr$vtime)),
+  
+  mean = c(mean(HeadN$vtime),
+           mean(HeadN.NAssc$vtime),
+           mean(HeadN.NUnr$vtime)),
+  
+  sd = c(sd(HeadN$vtime),
+         sd(HeadN.NAssc$vtime),
+         sd(HeadN.NUnr$vtime)),
+  
+  se = c(sd(HeadN$vtime)       / sqrt(length(HeadN$vtime)),
+         sd(HeadN.NAssc$vtime)  / sqrt(length(HeadN.NAssc$vtime)),
+         sd(HeadN.NUnr$vtime)  / sqrt(length(HeadN.NUnr$vtime))
+  ))
+
+cat("\n")
+cat("RELATED HEAD: NAssc vs. NUnrel", sep = "", fill = 60)
+cat(rep(c("-"), times = 40, quote = F), "\n")
+print(ds.relhead) 
+cat(" ", "\n")
+
+a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = HeadN) 
+print(summary(a.h.relunrel)) 
+cat(" ", "\n")
+cat(" ", "\n")
+
+
+# PROP: UnrelHead (NAssc vs. NUnr)----------------
+
+ds.unrel <- data.frame(data = c(
+  "UnrHead",
+  "NAssc",
+  "NUnrel"),
+  
+  n = c(length(UnrHead.base$vtime),
+        length(NAssc.base$vtime), 
+        length(NUnr.base$vtime)),
+  
+  N = c(length(UnrHead$vtime),
+        length(UnrHead.NAssc$vtime),
+        length(UnrHead.NUnr$vtime)),
+  
+  mean = c(mean(UnrHead$vtime),
+           mean(UnrHead.NAssc$vtime),
+           mean(UnrHead.NUnr$vtime)),
+  
+  sd = c(sd(UnrHead$vtime),
+         sd(UnrHead.NAssc$vtime),
+         sd(UnrHead.NUnr$vtime)),
+  
+  se = c(sd(UnrHead$vtime)       / sqrt(length(UnrHead$vtime)),
+         sd(UnrHead.NAssc$vtime)  / sqrt(length(UnrHead.NAssc$vtime)),
+         sd(UnrHead.NUnr$vtime)  / sqrt(length(UnrHead.NUnr$vtime))
+  ))
+
+cat("\n")
+cat("UNRELATED HEAD: NAssc vs. NUnrel", sep = "", fill = 60)
+cat(rep(c("-"), times = 40, quote = F), "\n")
+print(ds.unrel) 
+cat(" ", "\n")
+
+# a.uh.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = UnrHead) 
+# print(summary(a.uh.relunrel)) 
+# cat(" ", "\n")
+# cat(" ", "\n")
+
+#--------------------------------------------
+# PROP: (NRel vs. NAssc)
+rm(list = ls()) 
+library(languageR) 
+library(reshape2)
+library(plyr)
+library(stringr)
+
+f1vtimeout <- read.table("data/vtimeoutc.txt", header = F) 
+colnames(f1vtimeout) <- c("subj", "item", "subexp", "headrel", "localrel", "vtime")
+
+d.prop         <- subset(f1vtimeout, subexp == "Attr")
+d.prop.base    <- subset(f1vtimeout, subexp == "Attr")
+d.prop         <- subset(d.prop, localrel != "NUnr")
+d.prop.base    <- subset(d.prop, localrel != "NUnr")
+
+# PROP (Assc vs. Rel): Collapse over subject
+d.prop$unique.id <- paste(d.prop[, 1], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
+d.prop           <- ddply(d.prop, "unique.id", function(X) data.frame(vtime = mean(X$vtime)))
+vtime            <- data.frame(d.prop$vtime)
+d.prop           <- colsplit(d.prop$unique.id, "_", c("subj", "subexp", "headrel", "localrel"))
+d.prop$subj      <- as.factor(d.prop$subj)
+d.prop           <- cbind(d.prop,vtime)
+colnames(d.prop)[5] <- "vtime"
+rm(vtime)
+
+# PROP (Assc vs. Rel): All subjects subsetting
+HeadN.base         <- subset(d.prop.base, headrel   ==  "HeadN") 
+UnrHead.base       <- subset(d.prop.base, headrel   ==  "UnrHead")
+NRel.base          <- subset(d.prop.base, localrel  ==  "NRel") 
+NAssc.base         <- subset(d.prop.base, localrel  ==  "NAssc")
+HeadN.NRel.base    <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NRel")
+HeadN.NAssc.base   <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NAssc")
+UnrHead.NRel.base  <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NRel")
+UnrHead.NAssc.base <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NAssc")
+# ----
+
+
+# PROP (Assc vs. Rel): Collapsed subjects subsetting
+HeadN         <- subset(d.prop, headrel   ==  "HeadN") 
+UnrHead       <- subset(d.prop, headrel   ==  "UnrHead")
+NRel          <- subset(d.prop, localrel  ==  "NRel") 
+NAssc         <- subset(d.prop, localrel  ==  "NAssc")
+HeadN.NRel    <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NRel")
+HeadN.NAssc   <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NAssc")
+UnrHead.NRel  <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NRel")
+UnrHead.NAssc <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NAssc")
+# ----
+ds <- data.frame(data = c(
+  "Grand Mean",
+  "HeadN",
+  "UnrHead",
+  "NAssc",
+  "NUnr",
+  "HeadN-NAssc",
+  "HeadN-NRel",
+  "UnrHead-NAssc",
+  "UnrHead-NRel"),
+  
+  n = c(length(d.prop.base$vtime),
+        length(HeadN.base$vtime), 
+        length(UnrHead.base$vtime),
+        length(NAssc.base$vtime), 
+        length(NRel.base$vtime), 
+        length(HeadN.NAssc.base$vtime),
+        length(HeadN.NRel.base$vtime),
+        length(UnrHead.NAssc.base$vtime),
+        length(UnrHead.NRel.base$vtime)),
+  
+  N = c(length(d.prop$vtime),
+        length(HeadN$vtime), 
+        length(UnrHead$vtime),
+        length(NAssc$vtime), 
+        length(NRel$vtime), 
+        length(HeadN.NAssc$vtime),
+        length(HeadN.NRel$vtime),
+        length(UnrHead.NAssc$vtime),
+        length(UnrHead.NRel$vtime)),
+  
+  mean = c(mean(d.prop$vtime),
+           mean(HeadN$vtime), 
+           mean(UnrHead$vtime),
+           mean(NAssc$vtime), 
+           mean(NRel$vtime), 
+           mean(HeadN.NAssc$vtime),
+           mean(HeadN.NRel$vtime),
+           mean(UnrHead.NAssc$vtime),
+           mean(UnrHead.NRel$vtime)),
+  
+  sd = c(sd(d.prop$vtime),
+         sd(HeadN$vtime), 
+         sd(UnrHead$vtime),
+         sd(NAssc$vtime), 
+         sd(NRel$vtime), 
+         sd(HeadN.NAssc$vtime),
+         sd(HeadN.NRel$vtime),
+         sd(UnrHead.NAssc$vtime),
+         sd(UnrHead.NRel$vtime)),
+  
+  se = c(
+    sd(d.prop$vtime)         / sqrt(length(d.prop$vtime)),
+    sd(HeadN$vtime)         / sqrt(length(HeadN$vtime)), 
+    sd(UnrHead$vtime)       / sqrt(length(UnrHead$vtime)),
+    sd(NAssc$vtime)          / sqrt(length(NAssc$vtime)),
+    sd(NRel$vtime)          / sqrt(length(NRel$vtime)), 
+    sd(HeadN.NAssc$vtime)    / sqrt(length(HeadN.NAssc$vtime)),
+    sd(HeadN.NRel$vtime)    / sqrt(length(HeadN.NRel$vtime)),
+    sd(UnrHead.NAssc$vtime)  / sqrt(length(UnrHead.NAssc$vtime)),
+    sd(UnrHead.NRel$vtime)  / sqrt(length(UnrHead.NRel$vtime))  
+  ))
+
+
+cat(rep(c("-"), times=40, quote=F),"\n")
+cat("ASSOCIATED vs. RELATED HEAD", sep = "", fill = 60)
+cat(rep(c("-"), times=40, quote=F), "\n")
+print(ds) 
+cat(" ", "\n")
+# 
+# 
+# a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.prop)
+# print(summary(a.2x2)) 
+# cat(" ", "\n")
+# cat(" ", "\n")
+
+
+# PROP: RelHead (NAssc vs. NRel)----------------
+
+ds.relhead <- data.frame(data = c(
+  "HNoun",
+  "NAssc",
+  "NRelel"),
+  
+  n = c(length(HeadN.base$vtime),
+        length(NAssc.base$vtime), 
+        length(NRel.base$vtime)),
+  
+  N = c(length(HeadN$vtime),
+        length(HeadN.NAssc$vtime),
+        length(HeadN.NRel$vtime)),
+  
+  mean = c(mean(HeadN$vtime),
+           mean(HeadN.NAssc$vtime),
+           mean(HeadN.NRel$vtime)),
+  
+  sd = c(sd(HeadN$vtime),
+         sd(HeadN.NAssc$vtime),
+         sd(HeadN.NRel$vtime)),
+  
+  se = c(sd(HeadN$vtime)       / sqrt(length(HeadN$vtime)),
+         sd(HeadN.NAssc$vtime)  / sqrt(length(HeadN.NAssc$vtime)),
+         sd(HeadN.NRel$vtime)  / sqrt(length(HeadN.NRel$vtime))
+  ))
+
+cat("\n")
+cat("RELATED HEAD: NAssc vs. NRelel", sep = "", fill = 60)
+cat(rep(c("-"), times = 40, quote = F), "\n")
+print(ds.relhead) 
+cat(" ", "\n")
+
+a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = HeadN) 
+print(summary(a.h.relunrel)) 
+cat(" ", "\n")
+cat(" ", "\n")
+
+
+# PROP: UnrelHead (NAssc vs. NRel)----------------
+
+ds.unrel <- data.frame(data = c(
+  "UnrHead",
+  "NAssc",
+  "NUnrel"),
+  
+  n = c(length(UnrHead.base$vtime),
+        length(NAssc.base$vtime), 
+        length(NRel.base$vtime)),
+  
+  N = c(length(UnrHead$vtime),
+        length(UnrHead.NAssc$vtime),
+        length(UnrHead.NRel$vtime)),
+  
+  mean = c(mean(UnrHead$vtime),
+           mean(UnrHead.NAssc$vtime),
+           mean(UnrHead.NRel$vtime)),
+  
+  sd = c(sd(UnrHead$vtime),
+         sd(UnrHead.NAssc$vtime),
+         sd(UnrHead.NRel$vtime)),
+  
+  se = c(sd(UnrHead$vtime)       / sqrt(length(UnrHead$vtime)),
+         sd(UnrHead.NAssc$vtime)  / sqrt(length(UnrHead.NAssc$vtime)),
+         sd(UnrHead.NRel$vtime)  / sqrt(length(UnrHead.NRel$vtime))
+  ))
+
+cat("\n")
+cat("UNRELATED HEAD: NAssc vs. NUnrel", sep = "", fill = 60)
+cat(rep(c("-"), times = 40, quote = F), "\n")
+print(ds.unrel) 
+cat(" ", "\n")
+
+# a.uh.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = UnrHead) 
+# print(summary(a.uh.relunrel)) 
+# cat(" ", "\n")
+# cat(" ", "\n")
+
+
+
+
+
+
+sink()
+
+
+
+
+
+
+
+# SEMREL ITEMS ==========================================================================
+
+rm(list = ls())
+library(languageR) 
+library(reshape2)
+library(plyr)
+library(stringr)
+
+f1vtimeout <- read.table("data/vtimeoutc.txt", header = F) 
+colnames(f1vtimeout) <- c("subj", "item", "subexp", "headrel", "localrel", "vtime")
+
+d.semrel       <- subset(f1vtimeout, subexp == "SemRel")
+d.semrel.base  <- subset(f1vtimeout, subexp == "SemRel")
+
+# SEMREL: Collapse over subject
+d.semrel$unique.id <- paste(d.semrel[, 1], d.semrel[, 3], d.semrel[, 4], d.semrel[, 5], sep = "_")
+d.semrel           <- ddply(d.semrel, "unique.id", function(X) data.frame(vtime = mean(X$vtime)))
+vtime              <- data.frame(d.semrel$vtime)
+d.semrel           <- colsplit(d.semrel$unique.id, "_", c("subj", "subexp", "headrel", "localrel"))
+d.semrel$subj      <- as.factor(d.semrel$subj)
+d.semrel           <- cbind(d.semrel,vtime)
+colnames(d.semrel)[5] <- "vtime"
+rm(vtime)
+
+# SEMREL:  All subjects subsetting
+HeadN.base         <- subset(d.prop.base, headrel   ==  "HeadN") 
+UnrHead.base       <- subset(d.semrel.base, headrel   ==  "UnrHead")
+NRel.base          <- subset(d.semrel.base, localrel  ==  "NRel") 
+NUnr.base          <- subset(d.semrel.base, localrel  ==  "NUnr") 
+HeadN.NRel.base    <- subset(d.semrel.base, headrel   ==  "HeadN"   & localrel  ==  "NRel") 
+HeadN.NUnr.base    <- subset(d.semrel.base, headrel   ==  "HeadN"   & localrel  ==  "NUnr") 
+UnrHead.NRel.base  <- subset(d.semrel.base, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
+UnrHead.NUnr.base  <- subset(d.semrel.base, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
+
+# SEMREL: Collapsed subjects subsetting
+HeadN         <- subset(d.semrel, headrel   ==  "HeadN") 
+UnrHead       <- subset(d.semrel, headrel   ==  "UnrHead")
+NRel          <- subset(d.semrel, localrel  ==  "NRel") 
+NUnr          <- subset(d.semrel, localrel  ==  "NUnr") 
+HeadN.NRel    <- subset(d.semrel, headrel   ==  "HeadN"   & localrel  ==  "NRel") 
+HeadN.NUnr    <- subset(d.semrel, headrel   ==  "HeadN"   & localrel  ==  "NUnr") 
+UnrHead.NRel  <- subset(d.semrel, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
+UnrHead.NUnr  <- subset(d.semrel, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
+
+ds <- data.frame(data = c(
+  "Grand Mean",
+  "HeadN",
+  "UnrHead",
+  "NRel",
+  "NUnr",
+  "HeadN-NRel",
+  "HeadN-NUnr",
+  "UnrHead-NRel",
+  "UnrHead-NUnr"),
+  
+  n = c(length(d.cat.base$vtime),
+        length(HeadN.base$vtime), 
+        length(UnrHead.base$vtime),
+        length(NRel.base$vtime), 
+        length(NUnr.base$vtime), 
+        length(HeadN.NRel.base$vtime),
+        length(HeadN.NUnr.base$vtime),
+        length(UnrHead.NRel.base$vtime),
+        length(UnrHead.NUnr.base$vtime)),
+  
+  N = c(length(d.cat$vtime),
+        length(HeadN$vtime), 
+        length(UnrHead$vtime),
+        length(NRel$vtime), 
+        length(NUnr$vtime), 
+        length(HeadN.NRel$vtime),
+        length(HeadN.NUnr$vtime),
+        length(UnrHead.NRel$vtime),
+        length(UnrHead.NUnr$vtime)),
+  
+  mean = c(mean(d.cat$vtime),
+           mean(HeadN$vtime), 
+           mean(UnrHead$vtime),
+           mean(NRel$vtime), 
+           mean(NUnr$vtime), 
+           mean(HeadN.NRel$vtime),
+           mean(HeadN.NUnr$vtime),
+           mean(UnrHead.NRel$vtime),
+           mean(UnrHead.NUnr$vtime)),
+  
+  sd = c(sd(d.cat$vtime),
+         sd(HeadN$vtime), 
+         sd(UnrHead$vtime),
+         sd(NRel$vtime), 
+         sd(NUnr$vtime), 
+         sd(HeadN.NRel$vtime),
+         sd(HeadN.NUnr$vtime),
+         sd(UnrHead.NRel$vtime),
+         sd(UnrHead.NUnr$vtime)),
+  
+  se = c(sd(d.cat$vtime)       / sqrt(length(d.cat$vtime)),
+         sd(HeadN$vtime)       / sqrt(length(HeadN$vtime)), 
+         sd(UnrHead$vtime)     / sqrt(length(UnrHead$vtime)),
+         sd(NRel$vtime)        / sqrt(length(NRel$vtime)), 
+         sd(NUnr$vtime)        / sqrt(length(NUnr$vtime)), 
+         sd(HeadN.NRel$vtime)  / sqrt(length(HeadN.NRel$vtime)),
+         sd(HeadN.NUnr$vtime)  / sqrt(length(HeadN.NUnr$vtime)),
+         sd(UnrHead.NRel$vtime)/ sqrt(length(UnrHead.NRel$vtime)),
+         sd(UnrHead.NUnr$vtime)/ sqrt(length(UnrHead.NUnr$vtime))
+  ))
+
+# SEMREL: ALL 2X2 ANOVA-----------------------------------------------------
+
+sink("output/Reprime SemRel F1 Factorial Analyses.txt")
+
+cat(" ", "\n")
+cat("BY-SUBJECTS FACTORIAL ANALYSES RUN ON: ", format(Sys.time(), "%b. %d, %Y at %T"), sep = "", fill= 70)
+cat(" ", "\n")
+cat(rep(c("-"), times=40, quote=F),"\n")
+cat("2X2 ANOVA: SEMREL ITEMS", sep = "", fill = 60)
+cat(rep(c("-"), times=40, quote=F), "\n")
+print(ds) 
+cat(" ", "\n")
+
+a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.semrel)
+print(summary(a.2x2)) 
+cat(" ", "\n")
+cat(" ", "\n")
+
+# SEMREL: RELATED HEAD-------------------------------------------------------------------------------
+
+ds <- data.frame(data = c(
+  "HNoun",
+  "NRel",
+  "NUnrel"),
+  
+  n = c(length(HeadN.base$vtime),
+        length(HeadN.NRel.base$vtime), 
+        length(HeadN.NUnr.base$vtime)),
+  
+  N = c(length(HeadN$vtime),
+        length(HeadN.NRel$vtime), 
+        length(HeadN.NUnr$vtime)),
+  
+  mean = c(mean(HeadN$vtime),
+           mean(HeadN.NRel$vtime), 
+           mean(HeadN.NUnr$vtime)),
+  
+  sd = c(sd(HeadN$vtime),
+         sd(HeadN.NRel$vtime), 
+         sd(HeadN.NUnr$vtime)),
+  
+  se = c(sd(HeadN$vtime)       / sqrt(length(HeadN$vtime)),
+         sd(HeadN.NRel$vtime)  / sqrt(length(HeadN.NRel$vtime)), 
+         sd(HeadN.NUnr$vtime)  / sqrt(length(HeadN.NUnr$vtime))
+  ))
+
+cat("\n")
+cat("RELATED HEAD: NRel vs. NUnrel", sep = "", fill = 60)
+cat(rep(c("-"), times = 40, quote = F), "\n")
+print(ds) 
+cat(" ", "\n")
+
+a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = HeadN) 
+print(summary(a.h.relunrel)) 
+cat(" ", "\n")
+cat(" ", "\n")
+
+
+# SEMREL: UNRELATED HEAD  -------------------------------------------------------------------------------------------
+
+ds <- data.frame(data = c(
+  "UnrHead",
+  "NRel",
+  "NUnrel"),
+  
+  n = c(length(UnrHead.base$vtime),
+        length(UnrHead.NRel.base$vtime), 
+        length(UnrHead.NUnr.base$vtime)),
+  
+  N = c(length(HeadN$vtime),
+        length(UnrHead.NRel$vtime), 
+        length(UnrHead.NUnr$vtime)),
+  
+  mean = c(mean(HeadN$vtime),
+           mean(UnrHead.NRel$vtime), 
+           mean(UnrHead.NUnr$vtime)),
+  
+  sd = c(sd(HeadN$vtime),
+         sd(UnrHead.NRel$vtime), 
+         sd(UnrHead.NUnr$vtime)),
+  
+  se = c(sd(HeadN$vtime)       / sqrt(length(HeadN$vtime)),
+         sd(UnrHead.NRel$vtime)  / sqrt(length(UnrHead.NRel$vtime)), 
+         sd(UnrHead.NUnr$vtime)  / sqrt(length(UnrHead.NUnr$vtime))
+  ))
+
+cat("\n")
+cat("RELATED HEAD: NRel vs. NUnrel", sep = "", fill = 60)
+cat(rep(c("-"), times = 40, quote = F), "\n")
+print(ds) 
+cat(" ", "\n")
+
+a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = UnrHead) 
+print(summary(a.h.relunrel)) 
 
 sink()
