@@ -12,11 +12,11 @@ d.cat.base     <- subset(f1vtimeout, subexp == "Cat")
 d.cat          <- subset(f1vtimeout, subexp == "Cat")
 
 # CAT: Collapse over subject
-d.cat$unique.id <- paste(d.cat[, 1], d.cat[, 3], d.cat[, 4], d.cat[, 5], sep = "_")
+d.cat$unique.id <- paste(d.cat[, 2], d.cat[, 3], d.cat[, 4], d.cat[, 5], sep = "_")
 d.cat           <- ddply(d.cat, "unique.id", function(X) data.frame(vtime = mean(X$vtime)))
 vtime           <- data.frame(d.cat$vtime)
-d.cat           <- colsplit(d.cat$unique.id, "_", c("subj", "subexp", "headrel", "localrel"))
-d.cat$subj      <- as.factor(d.cat$subj)
+d.cat           <- colsplit(d.cat$unique.id, "_", c("item", "subexp", "headrel", "localrel"))
+d.cat$item      <- as.factor(d.cat$item)
 d.cat           <- cbind(d.cat,vtime)
 colnames(d.cat)[5] <- "vtime"
 rm(vtime)
@@ -107,10 +107,10 @@ ds <- data.frame(data = c(
 
 # CAT: All 2X2 ANOVA-----------------------------------------------------
 
-sink("output/Reprime Category F1 Factorial Analyses.txt")
+sink("output/Reprime Category F2 Factorial Analyses.txt")
 
 cat(" ", "\n")
-cat("BY-SUBJECTS FACTORIAL ANALYSES RUN ON: ", format(Sys.time(), "%b. %d, %Y at %T"), sep = "", fill= 70)
+cat("BY-ITEMS FACTORIAL ANALYSES RUN ON: ", format(Sys.time(), "%b. %d, %Y at %T"), sep = "", fill= 70)
 cat(" ", "\n")
 cat(rep(c("-"), times=40, quote=F),"\n")
 cat("2X2 ANOVA: CATEGORY COORDINATES", sep = "", fill = 60)
@@ -118,7 +118,7 @@ cat(rep(c("-"), times=40, quote=F), "\n")
 print(ds) 
 cat(" ", "\n")
 
-a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.cat)
+a.2x2 <- aov(vtime ~ headrel * localrel + Error(item / (headrel * localrel)), data = d.cat)
 print(summary(a.2x2)) 
 cat(" ", "\n")
 cat(" ", "\n")
@@ -133,7 +133,7 @@ g1     <- ggplot(data = cat.fig, aes(x = data, y = mean, fill=data)) +
   coord_cartesian(ylim = c(450, 500))+
 geom_errorbar(aes(ymax = mean + se, ymin = mean - se), position = dodge, width = 0.2)
 g1
-ggsave(filename = "figures/Category Coordiates F1.png")
+ggsave(filename = "figures/Category Coordiates F2.png")
 
 #   scale_fill_manual(values=c("#990000", "#CC6666", "#000099", "#9999CC")) +
 #   guides(fill=FALSE)+
@@ -185,7 +185,7 @@ cat(rep(c("-"), times = 40, quote = F), "\n")
 print(ds) 
 cat(" ", "\n")
 
-a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = HeadN) 
+a.h.relunrel <- aov(vtime ~ localrel + Error(item / (localrel)), data = HeadN) 
 print(summary(a.h.relunrel)) 
 cat(" ", "\n")
 cat(" ", "\n")
@@ -225,7 +225,7 @@ cat(rep(c("-"), times = 40, quote = F), "\n")
 print(ds) 
 cat(" ", "\n")
 
-a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = UnrHead) 
+a.h.relunrel <- aov(vtime ~ localrel + Error(item / (localrel)), data = UnrHead) 
 print(summary(a.h.relunrel)) 
 
 
@@ -247,12 +247,12 @@ d.prop.base    <- subset(f1vtimeout, subexp == "Attr")
 
 
 # PROP: Collapse over subject
-d.prop$unique.id <- paste(d.prop[, 1], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
+d.prop$unique.id <- paste(d.prop[, 2], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
 d.prop           <- ddply(d.prop, "unique.id", function(X) data.frame(vtime = mean(X$vtime)))
 vtime            <- data.frame(d.prop$vtime)
-d.prop           <- colsplit(d.prop$unique.id, "_", c("subj", "subexp", "headrel", "localrel"))
-d.prop$subj      <- as.factor(d.prop$subj)
-d.prop           <- cbind(d.prop,vtime)
+d.prop           <- colsplit(d.prop$unique.id, "_", c("item", "subexp", "headrel", "localrel"))
+d.prop$item      <- as.factor(d.prop$item)
+d.prop           <- cbind(d.prop, vtime)
 colnames(d.prop)[5] <- "vtime"
 rm(vtime)
 
@@ -379,10 +379,10 @@ ds <- data.frame(data = c(
 
 # PROP: All 2X3 ANOVA-----------------------------------------------------
 
-sink("output/Reprime Property F1 Factorial Analyses.txt")
+sink("output/Reprime Property F2 Factorial Analyses.txt")
 
 cat(" ", "\n")
-cat("BY-SUBJECTS FACTORIAL ANALYSES RUN ON: ", format(Sys.time(), "%b. %d, %Y at %T"), sep = "", fill= 70)
+cat("BY-ITEMS FACTORIAL ANALYSES RUN ON: ", format(Sys.time(), "%b. %d, %Y at %T"), sep = "", fill= 70)
 cat(" ", "\n")
 cat(rep(c("-"), times=40, quote=F),"\n")
 cat("2X3 ANOVA: PROPERTY ITEMS", sep = "", fill = 60)
@@ -391,7 +391,7 @@ print(ds)
 cat(" ", "\n")
 
 
-a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.prop)
+a.2x2 <- aov(vtime ~ headrel * localrel + Error(item / (headrel * localrel)), data = d.prop)
 print(summary(a.2x2)) 
 cat(" ", "\n")
 cat(" ", "\n")
@@ -406,7 +406,7 @@ g1     <- ggplot(data = prop.fig, aes(x = data, y = mean, fill=data)) +
   coord_cartesian(ylim = c(450, 525))+
   geom_errorbar(aes(ymax = mean + se, ymin = mean - se), position = dodge, width = 0.2)
 g1
-ggsave(filename = "figures/Property F1.png")
+ggsave(filename = "figures/Property F2.png")
 
 # PROP: (NRel vs. NUnrel) -------------------------------------------------------------------------------
 rm(list = ls()) 
@@ -424,11 +424,11 @@ d.prop         <- subset(d.prop, localrel != "NAssc")
 d.prop.base    <- subset(d.prop, localrel != "NAssc")
 
 # PROP (Rel vs. Unr): Collapse over subject
-d.prop$unique.id <- paste(d.prop[, 1], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
+d.prop$unique.id <- paste(d.prop[, 2], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
 d.prop           <- ddply(d.prop, "unique.id", function(X) data.frame(vtime = mean(X$vtime)))
 vtime            <- data.frame(d.prop$vtime)
-d.prop           <- colsplit(d.prop$unique.id, "_", c("subj", "subexp", "headrel", "localrel"))
-d.prop$subj      <- as.factor(d.prop$subj)
+d.prop           <- colsplit(d.prop$unique.id, "_", c("item", "subexp", "headrel", "localrel"))
+d.prop$item      <- as.factor(d.prop$item)
 d.prop           <- cbind(d.prop,vtime)
 colnames(d.prop)[5] <- "vtime"
 rm(vtime)
@@ -527,7 +527,7 @@ print(ds)
 cat(" ", "\n")
 
 
-a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.prop)
+a.2x2 <- aov(vtime ~ headrel * localrel + Error(item / (headrel * localrel)), data = d.prop)
 print(summary(a.2x2)) 
 cat(" ", "\n")
 cat(" ", "\n")
@@ -567,7 +567,7 @@ cat(rep(c("-"), times = 40, quote = F), "\n")
 print(ds.relhead) 
 cat(" ", "\n")
 
-a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = HeadN) 
+a.h.relunrel <- aov(vtime ~ localrel + Error(item / (localrel)), data = HeadN) 
 print(summary(a.h.relunrel)) 
 cat(" ", "\n")
 cat(" ", "\n")
@@ -607,7 +607,7 @@ cat(rep(c("-"), times = 40, quote = F), "\n")
 print(ds.unrel) 
 cat(" ", "\n")
 
-a.uh.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = UnrHead) 
+a.uh.relunrel <- aov(vtime ~ localrel + Error(item / (localrel)), data = UnrHead) 
 print(summary(a.uh.relunrel)) 
 cat(" ", "\n")
 cat(" ", "\n")
@@ -628,11 +628,11 @@ d.prop         <- subset(d.prop, localrel != "NRel")
 d.prop.base    <- subset(d.prop, localrel != "NRel")
 
 # PROP (Assc vs. Unr): Collapse over subject
-d.prop$unique.id <- paste(d.prop[, 1], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
+d.prop$unique.id <- paste(d.prop[, 2], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
 d.prop           <- ddply(d.prop, "unique.id", function(X) data.frame(vtime = mean(X$vtime)))
 vtime            <- data.frame(d.prop$vtime)
-d.prop           <- colsplit(d.prop$unique.id, "_", c("subj", "subexp", "headrel", "localrel"))
-d.prop$subj      <- as.factor(d.prop$subj)
+d.prop           <- colsplit(d.prop$unique.id, "_", c("item", "subexp", "headrel", "localrel"))
+d.prop$item      <- as.factor(d.prop$item)
 d.prop           <- cbind(d.prop,vtime)
 colnames(d.prop)[5] <- "vtime"
 rm(vtime)
@@ -770,7 +770,7 @@ cat(rep(c("-"), times = 40, quote = F), "\n")
 print(ds.relhead) 
 cat(" ", "\n")
 
-a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = HeadN) 
+a.h.relunrel <- aov(vtime ~ localrel + Error(item / (localrel)), data = HeadN) 
 print(summary(a.h.relunrel)) 
 cat(" ", "\n")
 cat(" ", "\n")
@@ -832,11 +832,11 @@ d.prop         <- subset(d.prop, localrel != "NUnr")
 d.prop.base    <- subset(d.prop, localrel != "NUnr")
 
 # PROP (Assc vs. Rel): Collapse over subject
-d.prop$unique.id <- paste(d.prop[, 1], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
+d.prop$unique.id <- paste(d.prop[, 2], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
 d.prop           <- ddply(d.prop, "unique.id", function(X) data.frame(vtime = mean(X$vtime)))
 vtime            <- data.frame(d.prop$vtime)
-d.prop           <- colsplit(d.prop$unique.id, "_", c("subj", "subexp", "headrel", "localrel"))
-d.prop$subj      <- as.factor(d.prop$subj)
+d.prop           <- colsplit(d.prop$unique.id, "_", c("item", "subexp", "headrel", "localrel"))
+d.prop$item      <- as.factor(d.prop$item)
 d.prop           <- cbind(d.prop,vtime)
 colnames(d.prop)[5] <- "vtime"
 rm(vtime)
@@ -974,7 +974,7 @@ cat(rep(c("-"), times = 40, quote = F), "\n")
 print(ds.relhead) 
 cat(" ", "\n")
 
-a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = HeadN) 
+a.h.relunrel <- aov(vtime ~ localrel + Error(item / (localrel)), data = HeadN) 
 print(summary(a.h.relunrel)) 
 cat(" ", "\n")
 cat(" ", "\n")
@@ -1042,12 +1042,12 @@ d.semrel       <- subset(f1vtimeout, subexp == "SemRel")
 d.semrel.base  <- subset(f1vtimeout, subexp == "SemRel")
 
 # SEMREL: Collapse over subject
-d.semrel$unique.id <- paste(d.semrel[, 1], d.semrel[, 3], d.semrel[, 4], d.semrel[, 5], sep = "_")
+d.semrel$unique.id <- paste(d.semrel[, 2], d.semrel[, 3], d.semrel[, 4], d.semrel[, 5], sep = "_")
 d.semrel           <- ddply(d.semrel, "unique.id", function(X) data.frame(vtime = mean(X$vtime)))
 vtime              <- data.frame(d.semrel$vtime)
-d.semrel           <- colsplit(d.semrel$unique.id, "_", c("subj", "subexp", "headrel", "localrel"))
-d.semrel$subj      <- as.factor(d.semrel$subj)
-d.semrel           <- cbind(d.semrel,vtime)
+d.semrel           <- colsplit(d.semrel$unique.id, "_", c("item", "subexp", "headrel", "localrel"))
+d.semrel$item      <- as.factor(d.semrel$item)
+d.semrel           <- cbind(d.semrel, vtime)
 colnames(d.semrel)[5] <- "vtime"
 rm(vtime)
 
@@ -1141,7 +1141,7 @@ g1     <- ggplot(data = semrel.fig, aes(x = data, y = mean, fill=data)) +
   coord_cartesian(ylim = c(450, 525))+
   geom_errorbar(aes(ymax = mean + se, ymin = mean - se), position = dodge, width = 0.2)
 g1
-ggsave(filename = "figures/SemRel F1.png")
+ggsave(filename = "figures/SemRel Coordiates F2.png")
 #   scale_fill_manual(values=c("#990000", "#CC6666", "#000099", "#9999CC")) +
 #   guides(fill=FALSE)+
 #  + 
@@ -1160,10 +1160,10 @@ ggsave(filename = "figures/SemRel F1.png")
 
 # SEMREL: ALL 2X2 ANOVA-----------------------------------------------------
 
-sink("output/Reprime SemRel F1 Factorial Analyses.txt")
+sink("output/Reprime SemRel F2 Factorial Analyses.txt")
 
 cat(" ", "\n")
-cat("BY-SUBJECTS FACTORIAL ANALYSES RUN ON: ", format(Sys.time(), "%b. %d, %Y at %T"), sep = "", fill= 70)
+cat("BY-ITEMS FACTORIAL ANALYSES RUN ON: ", format(Sys.time(), "%b. %d, %Y at %T"), sep = "", fill= 70)
 cat(" ", "\n")
 cat(rep(c("-"), times=40, quote=F),"\n")
 cat("2X2 ANOVA: SEMREL ITEMS", sep = "", fill = 60)
@@ -1171,7 +1171,7 @@ cat(rep(c("-"), times=40, quote=F), "\n")
 print(ds) 
 cat(" ", "\n")
 
-a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.semrel)
+a.2x2 <- aov(vtime ~ headrel * localrel + Error(item / (headrel * localrel)), data = d.semrel)
 print(summary(a.2x2)) 
 cat(" ", "\n")
 cat(" ", "\n")
@@ -1210,7 +1210,7 @@ cat(rep(c("-"), times = 40, quote = F), "\n")
 print(ds) 
 cat(" ", "\n")
 
-a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = HeadN) 
+a.h.relunrel <- aov(vtime ~ localrel + Error(item / (localrel)), data = HeadN) 
 print(summary(a.h.relunrel)) 
 cat(" ", "\n")
 cat(" ", "\n")
@@ -1250,7 +1250,7 @@ cat(rep(c("-"), times = 40, quote = F), "\n")
 print(ds) 
 cat(" ", "\n")
 
-a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = UnrHead) 
+a.h.relunrel <- aov(vtime ~ localrel + Error(item / (localrel)), data = UnrHead) 
 print(summary(a.h.relunrel)) 
 
 sink()
