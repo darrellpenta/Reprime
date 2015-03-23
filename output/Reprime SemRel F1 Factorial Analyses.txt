@@ -1,9 +1,19 @@
   
-BY-SUBJECTS FACTORIAL ANALYSES RUN ON: Mar. 22, 2015 at 23:52:06
+BY-SUBJECTS FACTORIAL ANALYSES RUN ON: Mar. 23, 2015 at 09:31:30
   
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 2X2 ANOVA: SEMREL ITEMS
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+          data   n   N     mean       sd        se
+1   Grand Mean 732 132 479.6277 58.72419  5.111285
+2        HeadN 369  66 478.8177 62.13978  7.648879
+3      UnrHead 363  66 480.4376 55.56466  6.839536
+4         NRel 370  66 473.2821 56.07946  6.902904
+5         NUnr 362  66 485.9732 61.01999  7.511041
+6   HeadN-NRel 188  33 466.0843 50.82906  8.848203
+7   HeadN-NUnr 181  33 491.5510 70.18099 12.216942
+8 UnrHead-NRel 182  33 480.4798 60.80826 10.585359
+9 UnrHead-NUnr 181  33 480.3955 50.73161  8.831240
   
 
 Error: subj
@@ -31,8 +41,12 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
   
   
 
-RELATED HEAD: Nrel vs. NUnrel
+RELATED HEAD: NRel vs. NUnrel
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    data   n  N     mean       sd        se
+1  HNoun 369 66 478.8177 62.13978  7.648879
+2   NRel 188 33 466.0843 50.82906  8.848203
+3 NUnrel 181 33 491.5510 70.18099 12.216942
   
 
 Error: subj
@@ -48,7 +62,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
   
   
 
-RELATED HEAD: Nrel vs. NUnrel
+RELATED HEAD: NRel vs. NUnrel
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
      data   n  N     mean       sd        se
 1 UnrHead 363 66 478.8177 62.13978  7.648879

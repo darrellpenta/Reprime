@@ -1,5 +1,5 @@
   
-BY-SUBJECTS FACTORIAL ANALYSES RUN ON: Mar. 23, 2015 at 00:17:16
+BY-SUBJECTS FACTORIAL ANALYSES RUN ON: Mar. 23, 2015 at 09:12:30
   
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 2X2 ANOVA: PROPERTY ITEMS
@@ -44,176 +44,21 @@ headrel:localrel  2   4504    2252   1.466  0.239
 Residuals        63  96806    1537               
   
   
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-RELATED vs. UNRELATED HEAD
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-          data   n   N     mean       sd        se
-1   Grand Mean 476 132 480.9747 73.98276  6.439373
-2        HeadN 234  66 481.4457 71.38243  8.786569
-3      UnrHead 242  66 480.5038 77.04027  9.483002
-4         NRel 244  66 473.1970 64.79965  7.976286
-5         NUnr 232  66 488.7525 81.91008 10.082434
-6   HeadN-NRel 120  33 473.7929 67.60697 11.768862
-7   HeadN-NUnr 114  33 489.0985 75.22395 13.094808
-8 UnrHead-NRel 124  33 472.6010 62.91084 10.951372
-9 UnrHead-NUnr 118  33 488.4066 89.27092 15.540073
-  
-
-Error: subj
-          Df Sum Sq Mean Sq F value Pr(>F)
-Residuals 32 494033   15439               
-
-Error: subj:headrel
-          Df Sum Sq Mean Sq F value Pr(>F)
-headrel    1     29    29.3   0.012  0.913
-Residuals 32  76689  2396.5               
-
-Error: subj:localrel
-          Df Sum Sq Mean Sq F value Pr(>F)  
-localrel   1   7985    7985   3.255 0.0806 .
-Residuals 32  78510    2453                 
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Error: subj:headrel:localrel
-                 Df Sum Sq Mean Sq F value Pr(>F)
-headrel:localrel  1      2     2.1   0.001  0.974
-Residuals        32  59773  1867.9               
-  
-  
-
-RELATED HEAD: NRel vs. NUnrel
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    data   n  N     mean       sd        se
-1  HNoun 234 66 481.4457 71.38243  8.786569
-2   NRel 244 33 473.7929 67.60697 11.768862
-3 NUnrel 232 33 489.0985 75.22395 13.094808
-  
-
-Error: subj
-          Df Sum Sq Mean Sq F value Pr(>F)
-Residuals 32 286199    8944               
-
-Error: subj:localrel
-          Df Sum Sq Mean Sq F value Pr(>F)  
-localrel   1   3865    3865   3.007 0.0926 .
-Residuals 32  41140    1286                 
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-  
-  
-
-UNRELATED HEAD: NRel vs. NUnrel
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-     data   n  N     mean       sd        se
-1 UnrHead 242 66 480.5038 77.04027  9.483002
-2    NRel 244 33 472.6010 62.91084 10.951372
-3  NUnrel 232 33 488.4066 89.27092 15.540073
-  
-
-Error: subj
-          Df Sum Sq Mean Sq F value Pr(>F)
-Residuals 32 284523    8891               
-
-Error: subj:localrel
-          Df Sum Sq Mean Sq F value Pr(>F)
-localrel   1   4122    4122   1.358  0.253
-Residuals 32  97143    3036               
-  
-  
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-ASSOCIATED vs. UNRELATED HEAD
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-           data   n   N     mean       sd        se
-1    Grand Mean 473 131 480.0763 72.47115  6.331834
-2         HeadN 235  66 474.4773 69.44366  8.547923
-3       UnrHead 238  65 485.7615 75.53368  9.368799
-4         NAssc 241  65 471.2667 60.80887  7.542412
-5          NUnr 232  66 488.7525 81.91008 10.082434
-6   HeadN-NAssc 121  33 459.8561 60.79457 10.582977
-7    HeadN-NUnr 114  33 489.0985 75.22395 13.094808
-8 UnrHead-NAssc 120  32 483.0339 59.47486 10.513769
-9  UnrHead-NUnr 118  33 488.4066 89.27092 15.540073
-  
-
-RELATED HEAD: NAssc vs. NUnrel
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    data   n  N     mean       sd        se
-1  HNoun 235 66 474.4773 69.44366  8.547923
-2  NAssc 241 33 459.8561 60.79457 10.582977
-3 NUnrel 232 33 489.0985 75.22395 13.094808
-  
-
-Error: subj
-          Df Sum Sq Mean Sq F value Pr(>F)
-Residuals 32 251376    7856               
-
-Error: subj:localrel
-          Df Sum Sq Mean Sq F value  Pr(>F)   
-localrel   1  14109   14109   9.412 0.00436 **
-Residuals 32  47972    1499                   
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-  
-  
-
-UNRELATED HEAD: NAssc vs. NUnrel
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-     data   n  N     mean       sd        se
-1 UnrHead 238 65 485.7615 75.53368  9.368799
-2   NAssc 241 32 483.0339 59.47486 10.513769
-3  NUnrel 232 33 488.4066 89.27092 15.540073
-  
-
-Error: subj
-          Df Sum Sq Mean Sq F value Pr(>F)
-localrel   1   7557    7557   0.936  0.341
-Residuals 31 250222    8072               
-
-Error: subj:localrel
-          Df Sum Sq Mean Sq F value Pr(>F)
-localrel   1   1063    1063    0.31  0.582
-Residuals 31 106299    3429               
-  
-  
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-ASSOCIATED vs. UNRELATED HEAD
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-           data   n   N     mean       sd        se
-1    Grand Mean 485 131 472.2392 62.61670  5.470847
-2         HeadN 241  66 466.8245 64.17988  7.899997
-3       UnrHead 244  65 477.7372 60.99079  7.564976
-4         NAssc 241  65 471.2667 60.80887  7.542412
-5          NUnr 244  66 473.1970 64.79965  7.976286
-6   HeadN-NAssc 121  33 459.8561 60.79457 10.582977
-7    HeadN-NRel 120  33 473.7929 67.60697 11.768862
-8 UnrHead-NAssc 120  32 483.0339 59.47486 10.513769
-9  UnrHead-NRel 124  33 472.6010 62.91084 10.951372
-  
-
-RELATED HEAD: NAssc vs. NRelel
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    data   n  N     mean       sd        se
-1  HNoun 241 66 466.8245 64.17988  7.899997
-2  NAssc 241 33 459.8561 60.79457 10.582977
-3 NRelel 244 33 473.7929 67.60697 11.768862
-  
-
-Error: subj
-          Df Sum Sq Mean Sq F value Pr(>F)
-Residuals 32 223731    6992               
-
-Error: subj:localrel
-          Df Sum Sq Mean Sq F value Pr(>F)
-localrel   1   3205    3205   2.514  0.123
-Residuals 32  40802    1275               
-  
-  
-
-UNRELATED HEAD: NAssc vs. NUnrel
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-     data   n  N     mean       sd        se
-1 UnrHead 244 65 477.7372 60.99079  7.564976
-2   NAssc 241 32 483.0339 59.47486 10.513769
-3  NUnrel 244 33 472.6010 62.91084 10.951372
-  
+function (..., file = "", sep = " ", fill = FALSE, labels = NULL, 
+    append = FALSE) 
+{
+    if (is.character(file)) 
+        if (file == "") 
+            file <- stdout()
+        else if (substring(file, 1L, 1L) == "|") {
+            file <- pipe(substring(file, 2L), "w")
+            on.exit(close(file))
+        }
+        else {
+            file <- file(file, ifelse(append, "a", "w"))
+            on.exit(close(file))
+        }
+    .Internal(cat(list(...), file, sep, fill, labels, append))
+}
+<bytecode: 0x108e4a308>
+<environment: namespace:base>
