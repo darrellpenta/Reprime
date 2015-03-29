@@ -1,0 +1,64 @@
+  
+BY-ITEMS FACTORIAL ANALYSES RUN ON: Mar. 29, 2015 at 12:43:29
+  
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+2X2 ANOVA: SEMREL ITEMS
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  
+
+Error: item
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals 23  47493    2065               
+
+Error: item:headrel
+          Df Sum Sq Mean Sq F value Pr(>F)
+headrel    1    305   305.2   0.121  0.731
+Residuals 23  58111  2526.6               
+
+Error: item:localrel
+          Df Sum Sq Mean Sq F value Pr(>F)
+localrel   1   3002    3002   1.751  0.199
+Residuals 23  39442    1715               
+
+Error: item:headrel:localrel
+                 Df Sum Sq Mean Sq F value  Pr(>F)   
+headrel:localrel  1   4391    4391   9.508 0.00525 **
+Residuals        23  10621     462                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  
+  
+
+RELATED HEAD: NRel vs. NUnrel
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  
+
+Error: item
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals 23  61780    2686               
+
+Error: item:localrel
+          Df Sum Sq Mean Sq F value Pr(>F)  
+localrel   1   7327    7327   6.081 0.0216 *
+Residuals 23  27715    1205                 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  
+  
+
+RELATED HEAD: NRel vs. NUnrel
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+     data   n  N     mean       sd       se
+1 UnrHead 363 48 477.3932 45.38765 6.551144
+2    NRel 182 24 482.1301 34.26355 6.994019
+3  NUnrel 181 24 479.7887 41.26826 8.423849
+  
+
+Error: item
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals 23  43824    1905               
+
+Error: item:localrel
+          Df Sum Sq Mean Sq F value Pr(>F)
+localrel   1     66    65.8   0.068  0.797
+Residuals 23  22348   971.7               
