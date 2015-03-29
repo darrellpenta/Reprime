@@ -2,7 +2,7 @@ rm(list = ls())
 library(languageR) 
 library(reshape2)
 library(plyr)
-library(stringr)
+library(stringr) 
 
 # CATEGORY ITEMS ==============================================================================================
 

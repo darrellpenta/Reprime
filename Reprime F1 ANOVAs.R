@@ -3,7 +3,7 @@ library(languageR)
 library(reshape2)
 library(plyr)
 library(stringr)
-
+library(ggplot2) 
 # CATEGORY ITEMS ==============================================================================================
 
 f1vtimeout <- read.table("data/vtimeoutc.txt", header = F) 
@@ -104,7 +104,7 @@ ds <- data.frame(data = c(
          sd(UnrHead.NUnr$vtime)/ sqrt(length(UnrHead.NUnr$vtime))
   ))
 
-#
+
 # CAT: All 2X2 ANOVA-----------------------------------------------------
 
 sink("output/Reprime Category F1 Factorial Analyses.txt")
@@ -122,6 +122,34 @@ a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), da
 print(summary(a.2x2)) 
 cat(" ", "\n")
 cat(" ", "\n")
+
+
+
+# CAT: Figure -----------------------------
+cat.fig <- ds[6:9,c(1,4,6)]
+dodge  <- position_dodge(width = 0.9)
+g1     <- ggplot(data = cat.fig, aes(x = data, y = mean, fill=data)) +
+  layer(geom="bar", stat="identity", position = position_dodge())+
+  coord_cartesian(ylim = c(450, 500))+
+geom_errorbar(aes(ymax = mean + se, ymin = mean - se), position = dodge, width = 0.2)
+g1
+ggsave(filename = "figures/Category Coordiates F1.png")
+
+#   scale_fill_manual(values=c("#990000", "#CC6666", "#000099", "#9999CC")) +
+#   guides(fill=FALSE)+
+#  + 
+#   +
+#   scale_y_continuous(breaks=seq(0, 14, 2))+
+#   annotate("text", x = 1:4, y = -1, label = rep(c("Integrated", "Unintegrated"), 2), size=6) +
+#   annotate("text", c(1.5, 3.5), y = -2, label = c("Related", "Unrelated"), size=6) +
+#   
+#   theme_classic() +
+#   theme(text = element_text(size=18.5)) +
+#   ylab("Mismatch effect (%)") +
+#   theme(axis.title.y=element_text(vjust=1.5)) +
+#   theme(plot.margin = unit(c(1, 1, 4, 1), "lines"), axis.title.x = element_blank(), axis.text.x = element_blank())
+
+
 
 # CAT: RELATED HEAD-------------------------------------------------------------------------------
 
@@ -349,7 +377,7 @@ ds <- data.frame(data = c(
      sd(UnrHead.NUnr$vtime)  / sqrt(length(UnrHead.NUnr$vtime))  
   ))
 
-# PROP: All 2X2 ANOVA-----------------------------------------------------
+# PROP: All 2X3 ANOVA-----------------------------------------------------
 
 sink("output/Reprime Property F1 Factorial Analyses.txt")
 
@@ -357,7 +385,7 @@ cat(" ", "\n")
 cat("BY-SUBJECTS FACTORIAL ANALYSES RUN ON: ", format(Sys.time(), "%b. %d, %Y at %T"), sep = "", fill= 70)
 cat(" ", "\n")
 cat(rep(c("-"), times=40, quote=F),"\n")
-cat("2X2 ANOVA: PROPERTY ITEMS", sep = "", fill = 60)
+cat("2X3 ANOVA: PROPERTY ITEMS", sep = "", fill = 60)
 cat(rep(c("-"), times=40, quote=F), "\n")
 print(ds) 
 cat(" ", "\n")
@@ -367,6 +395,18 @@ a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), da
 print(summary(a.2x2)) 
 cat(" ", "\n")
 cat(" ", "\n")
+
+
+
+# PROP: Figure ----------------------------------------------------
+prop.fig <- ds[7:12,c(1,4,6)]
+dodge  <- position_dodge(width = 0.9)
+g1     <- ggplot(data = prop.fig, aes(x = data, y = mean, fill=data)) +
+  layer(geom="bar", stat="identity", position = position_dodge())+
+  coord_cartesian(ylim = c(450, 525))+
+  geom_errorbar(aes(ymax = mean + se, ymin = mean - se), position = dodge, width = 0.2)
+g1
+ggsave(filename = "figures/Property F1.png")
 
 # PROP: (NRel vs. NUnrel) -------------------------------------------------------------------------------
 rm(list = ls()) 
@@ -979,11 +1019,6 @@ cat(" ", "\n")
 # cat(" ", "\n")
 # cat(" ", "\n")
 
-
-
-
-
-
 sink()
 
 
@@ -1017,7 +1052,7 @@ colnames(d.semrel)[5] <- "vtime"
 rm(vtime)
 
 # SEMREL:  All subjects subsetting
-HeadN.base         <- subset(d.prop.base, headrel   ==  "HeadN") 
+HeadN.base         <- subset(d.semrel.base, headrel   ==  "HeadN") 
 UnrHead.base       <- subset(d.semrel.base, headrel   ==  "UnrHead")
 NRel.base          <- subset(d.semrel.base, localrel  ==  "NRel") 
 NUnr.base          <- subset(d.semrel.base, localrel  ==  "NUnr") 
@@ -1047,7 +1082,7 @@ ds <- data.frame(data = c(
   "UnrHead-NRel",
   "UnrHead-NUnr"),
   
-  n = c(length(d.cat.base$vtime),
+  n = c(length(d.semrel.base$vtime),
         length(HeadN.base$vtime), 
         length(UnrHead.base$vtime),
         length(NRel.base$vtime), 
@@ -1057,7 +1092,7 @@ ds <- data.frame(data = c(
         length(UnrHead.NRel.base$vtime),
         length(UnrHead.NUnr.base$vtime)),
   
-  N = c(length(d.cat$vtime),
+  N = c(length(d.semrel$vtime),
         length(HeadN$vtime), 
         length(UnrHead$vtime),
         length(NRel$vtime), 
@@ -1067,7 +1102,7 @@ ds <- data.frame(data = c(
         length(UnrHead.NRel$vtime),
         length(UnrHead.NUnr$vtime)),
   
-  mean = c(mean(d.cat$vtime),
+  mean = c(mean(d.semrel$vtime),
            mean(HeadN$vtime), 
            mean(UnrHead$vtime),
            mean(NRel$vtime), 
@@ -1077,7 +1112,7 @@ ds <- data.frame(data = c(
            mean(UnrHead.NRel$vtime),
            mean(UnrHead.NUnr$vtime)),
   
-  sd = c(sd(d.cat$vtime),
+  sd = c(sd(d.semrel$vtime),
          sd(HeadN$vtime), 
          sd(UnrHead$vtime),
          sd(NRel$vtime), 
@@ -1087,7 +1122,7 @@ ds <- data.frame(data = c(
          sd(UnrHead.NRel$vtime),
          sd(UnrHead.NUnr$vtime)),
   
-  se = c(sd(d.cat$vtime)       / sqrt(length(d.cat$vtime)),
+  se = c(sd(d.semrel$vtime)       / sqrt(length(d.semrel$vtime)),
          sd(HeadN$vtime)       / sqrt(length(HeadN$vtime)), 
          sd(UnrHead$vtime)     / sqrt(length(UnrHead$vtime)),
          sd(NRel$vtime)        / sqrt(length(NRel$vtime)), 
@@ -1097,6 +1132,31 @@ ds <- data.frame(data = c(
          sd(UnrHead.NRel$vtime)/ sqrt(length(UnrHead.NRel$vtime)),
          sd(UnrHead.NUnr$vtime)/ sqrt(length(UnrHead.NUnr$vtime))
   ))
+
+# SEMREL: Figure -------------------------------------------------
+semrel.fig <- ds[6:9,c(1,4,6)]
+dodge  <- position_dodge(width = 0.9)
+g1     <- ggplot(data = semrel.fig, aes(x = data, y = mean, fill=data)) +
+  layer(geom="bar", stat="identity", position = position_dodge())+
+  coord_cartesian(ylim = c(450, 525))+
+  geom_errorbar(aes(ymax = mean + se, ymin = mean - se), position = dodge, width = 0.2)
+g1
+ggsave(filename = "figures/SemRel F1.png")
+#   scale_fill_manual(values=c("#990000", "#CC6666", "#000099", "#9999CC")) +
+#   guides(fill=FALSE)+
+#  + 
+#   +
+#   scale_y_continuous(breaks=seq(0, 14, 2))+
+#   annotate("text", x = 1:4, y = -1, label = rep(c("Integrated", "Unintegrated"), 2), size=6) +
+#   annotate("text", c(1.5, 3.5), y = -2, label = c("Related", "Unrelated"), size=6) +
+#   
+#   theme_classic() +
+#   theme(text = element_text(size=18.5)) +
+#   ylab("Mismatch effect (%)") +
+#   theme(axis.title.y=element_text(vjust=1.5)) +
+#   theme(plot.margin = unit(c(1, 1, 4, 1), "lines"), axis.title.x = element_blank(), axis.text.x = element_blank())
+
+
 
 # SEMREL: ALL 2X2 ANOVA-----------------------------------------------------
 

@@ -1,9 +1,26 @@
   
+<<<<<<< HEAD
 BY-ITEMS FACTORIAL ANALYSES RUN ON: Mar. 29, 2015 at 12:43:29
+=======
+BY-ITEMS FACTORIAL ANALYSES RUN ON: Mar. 23, 2015 at 10:08:45
+>>>>>>> origin/master
   
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 2X2 ANOVA: SEMREL ITEMS
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+<<<<<<< HEAD
+=======
+          data   n  N     mean       sd        se
+1   Grand Mean 732 96 479.1763 41.46847  4.232358
+2        HeadN 369 48 477.3932 45.38765  6.551144
+3      UnrHead 363 48 480.9594 37.54095  5.418570
+4         NRel 370 48 473.5840 35.50979  5.125397
+5         NUnr 362 48 484.7685 46.37924  6.694267
+6   HeadN-NRel 188 24 465.0380 35.35963  7.217755
+7   HeadN-NUnr 181 24 489.7483 51.38841 10.489615
+8 UnrHead-NRel 182 24 482.1301 34.26355  6.994019
+9 UnrHead-NUnr 181 24 479.7887 41.26826  8.423849
+>>>>>>> origin/master
   
 
 Error: item
@@ -31,6 +48,13 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 
 RELATED HEAD: NRel vs. NUnrel
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+<<<<<<< HEAD
+=======
+    data   n  N     mean       sd        se
+1  HNoun 369 48 477.3932 45.38765  6.551144
+2   NRel 188 24 465.0380 35.35963  7.217755
+3 NUnrel 181 24 489.7483 51.38841 10.489615
+>>>>>>> origin/master
   
 
 Error: item
