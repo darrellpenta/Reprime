@@ -1,9 +1,5 @@
   
-<<<<<<< HEAD
-BY-ITEMS FACTORIAL ANALYSES RUN ON: Mar. 29, 2015 at 13:16:43
-=======
-BY-ITEMS FACTORIAL ANALYSES RUN ON: Mar. 23, 2015 at 10:08:38
->>>>>>> origin/master
+BY-ITEMS FACTORIAL ANALYSES RUN ON: Mar. 31, 2015 at 10:17:15
   
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 2X2 ANOVA: CATEGORY COORDINATES

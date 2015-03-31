@@ -1044,7 +1044,7 @@ colnames(d.semrel)[5] <- "vtime"
 rm(vtime)
 
 # SEMREL:  All items subsetting
-HeadN.base         <- subset(d.prop.base, headrel   ==  "HeadN") 
+HeadN.base         <- subset(d.semrel.base, headrel   ==  "HeadN") 
 UnrHead.base       <- subset(d.semrel.base, headrel   ==  "UnrHead")
 NRel.base          <- subset(d.semrel.base, localrel  ==  "NRel") 
 NUnr.base          <- subset(d.semrel.base, localrel  ==  "NUnr") 
@@ -1074,7 +1074,7 @@ ds <- data.frame(data = c(
   "UnrHead-NRel",
   "UnrHead-NUnr"),
   
-  n = c(length(d.cat.base$vtime),
+  n = c(length(d.semrel.base$vtime),
         length(HeadN.base$vtime), 
         length(UnrHead.base$vtime),
         length(NRel.base$vtime), 
@@ -1084,7 +1084,7 @@ ds <- data.frame(data = c(
         length(UnrHead.NRel.base$vtime),
         length(UnrHead.NUnr.base$vtime)),
   
-  N = c(length(d.cat$vtime),
+  N = c(length(d.semrel$vtime),
         length(HeadN$vtime), 
         length(UnrHead$vtime),
         length(NRel$vtime), 
@@ -1094,7 +1094,7 @@ ds <- data.frame(data = c(
         length(UnrHead.NRel$vtime),
         length(UnrHead.NUnr$vtime)),
   
-  mean = c(mean(d.cat$vtime),
+  mean = c(mean(d.semrel$vtime),
            mean(HeadN$vtime), 
            mean(UnrHead$vtime),
            mean(NRel$vtime), 
@@ -1104,7 +1104,7 @@ ds <- data.frame(data = c(
            mean(UnrHead.NRel$vtime),
            mean(UnrHead.NUnr$vtime)),
   
-  sd = c(sd(d.cat$vtime),
+  sd = c(sd(d.semrel$vtime),
          sd(HeadN$vtime), 
          sd(UnrHead$vtime),
          sd(NRel$vtime), 
@@ -1114,7 +1114,7 @@ ds <- data.frame(data = c(
          sd(UnrHead.NRel$vtime),
          sd(UnrHead.NUnr$vtime)),
   
-  se = c(sd(d.cat$vtime)       / sqrt(length(d.cat$vtime)),
+  se = c(sd(d.semrel$vtime)       / sqrt(length(d.semrel$vtime)),
          sd(HeadN$vtime)       / sqrt(length(HeadN$vtime)), 
          sd(UnrHead$vtime)     / sqrt(length(UnrHead$vtime)),
          sd(NRel$vtime)        / sqrt(length(NRel$vtime)), 
