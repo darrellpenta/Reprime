@@ -41,8 +41,15 @@ HeadN.NUnr    <- subset(d.cat, headrel   ==  "HeadN"   & localrel  ==  "NUnr")
 UnrHead.NRel  <- subset(d.cat, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
 UnrHead.NUnr  <- subset(d.cat, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
 
+# # Prming Effect Error Bars
+# cat.err <- data.frame(data = c(
+#   sqrt( ( sd( HeadN.NRel$vtime)^2 / length( HeadN.NRel$vtime)) + 
+#           ( sd( UnrHead.NRel$vtime)^2 / length(UnrHead.NRel$vtime))),    
+#   sqrt( ( sd( HeadN.NUnr$vtime)^2 / length( HeadN.NUnr$vtime)) + 
+#           ( sd( UnrHead.NUnr$vtime)^2 / length(UnrHead.NUnr$vtime)))    
+# ))
 
-ds <- data.frame(data = c(
+ds.cat <- data.frame(data = c(
   "Grand Mean",
   "HeadN",
   "UnrHead",
@@ -123,35 +130,6 @@ print(summary(a.2x2))
 cat(" ", "\n")
 cat(" ", "\n")
 
-
-
-# CAT: Figure -----------------------------
-cat.fig <- ds[6:9,c(1,4,6)]
-dodge  <- position_dodge(width = 0.9)
-g1     <- ggplot(data = cat.fig, aes(x = data, y = mean, fill=data)) +
-  layer(geom="bar", stat="identity", position = position_dodge())+
-  coord_cartesian(ylim = c(450, 500))+
-geom_errorbar(aes(ymax = mean + se, ymin = mean - se), position = dodge, width = 0.2)
-g1
-ggsave(filename = "figures/Category Coordiates F1.png")
-
-#   scale_fill_manual(values=c("#990000", "#CC6666", "#000099", "#9999CC")) +
-#   guides(fill=FALSE)+
-#  + 
-#   +
-#   scale_y_continuous(breaks=seq(0, 14, 2))+
-#   annotate("text", x = 1:4, y = -1, label = rep(c("Integrated", "Unintegrated"), 2), size=6) +
-#   annotate("text", c(1.5, 3.5), y = -2, label = c("Related", "Unrelated"), size=6) +
-#   
-#   theme_classic() +
-#   theme(text = element_text(size=18.5)) +
-#   ylab("Mismatch effect (%)") +
-#   theme(axis.title.y=element_text(vjust=1.5)) +
-#   theme(plot.margin = unit(c(1, 1, 4, 1), "lines"), axis.title.x = element_blank(), axis.text.x = element_blank())
-
-
-
-# CAT: RELATED HEAD-------------------------------------------------------------------------------
 
 ds <- data.frame(data = c(
   "HNoun",
@@ -268,6 +246,7 @@ HeadN.NAssc.base   <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==
 UnrHead.NRel.base  <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
 UnrHead.NUnr.base  <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
 UnrHead.NAssc.base <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NAssc")
+
 # ----
 HeadN.Rel.Un.base      <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NRel" & localrel  ==  "NUnr") 
 UnrHead.Rel.Un.base    <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NRel" & localrel  ==  "NUnr")
@@ -377,6 +356,21 @@ ds <- data.frame(data = c(
      sd(UnrHead.NUnr$vtime)  / sqrt(length(UnrHead.NUnr$vtime))  
   ))
 
+
+
+# # ---------Priming EFfect Error Bars----------
+# 
+# prop.err <- data.frame(data = c(
+#   sqrt( ( sd( HeadN.NRel$vtime)^2 / length( HeadN.NRel$vtime)) + 
+#           ( sd( UnrHead.NRel$vtime)^2 / length(UnrHead.NRel$vtime))),  
+#   sqrt( ( sd( HeadN.NAssc$vtime)^2 / length( HeadN.NAssc$vtime)) + 
+#           ( sd( UnrHead.NAssc$vtime)^2 / length(UnrHead.NAssc$vtime))),  
+#   sqrt( ( sd( HeadN.NUnr$vtime)^2 / length( HeadN.NUnr$vtime)) + 
+#           ( sd( UnrHead.NUnr$vtime)^2 / length(UnrHead.NUnr$vtime)))    
+# ))
+
+
+
 # PROP: All 2X3 ANOVA-----------------------------------------------------
 
 sink("output/Reprime Property F1 Factorial Analyses.txt")
@@ -396,6 +390,14 @@ print(summary(a.2x2))
 cat(" ", "\n")
 cat(" ", "\n")
 
+
+
+cat.err <- data.frame(data = c(
+  sqrt( ( sd( HeadN.NRel$vtime)^2 / length( HeadN.NRel$vtime)) + 
+          ( sd( UnrHead.NRel$vtime)^2 / length(UnrHead.NRel$vtime))),    
+  sqrt( ( sd( HeadN.NUnr$vtime)^2 / length( HeadN.NUnr$vtime)) + 
+          ( sd( UnrHead.NUnr$vtime)^2 / length(UnrHead.NUnr$vtime)))    
+))
 
 
 # PROP: Figure ----------------------------------------------------
@@ -1071,6 +1073,12 @@ HeadN.NUnr    <- subset(d.semrel, headrel   ==  "HeadN"   & localrel  ==  "NUnr"
 UnrHead.NRel  <- subset(d.semrel, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
 UnrHead.NUnr  <- subset(d.semrel, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
 
+
+
+
+
+
+
 ds <- data.frame(data = c(
   "Grand Mean",
   "HeadN",
@@ -1133,15 +1141,39 @@ ds <- data.frame(data = c(
          sd(UnrHead.NUnr$vtime)/ sqrt(length(UnrHead.NUnr$vtime))
   ))
 
+# Prming Effect Error Bars
+# semrel.err <- data.frame(data = c(
+#   sqrt( ( sd( HeadN.NRel$vtime)^2 / length( HeadN.NRel$vtime)) + 
+#           ( sd( UnrHead.NRel$vtime)^2 / length(UnrHead.NRel$vtime))),    
+#   sqrt( ( sd( HeadN.NUnr$vtime)^2 / length( HeadN.NUnr$vtime)) + 
+#           ( sd( UnrHead.NUnr$vtime)^2 / length(UnrHead.NUnr$vtime)))    
+# ))
+
+SE = c(
+  sd(se.rel.int$error) / sqrt(length(se.rel.int$error)),
+  sd(se.rel.uni$error) / sqrt(length(se.rel.uni$error)),
+  sd(se.unr.int$error) / sqrt(length(se.unr.int$error)),
+  sd(se.unr.uni$error) / sqrt(length(se.unr.uni$error)))
+)
+
+# cat.err$cond <- c("Cat.Rel","Car.Unrel")
+# prop.err$cond <- c("Prop.Rel", "Prop.Ass", "Prop.Unrel")
+# semrel.err$cond <- c("SR.Rel","SR.Unrel")
+# 
+# ### PRIMING EXPERIMENT ERROR BARS DAT FRAME
+# prime.eff.errbars <- rbind(cat.err, prop.err)
+# prime.eff.errbars <- rbind(prime.eff.errbars, semrel.err)
+# write.csv(prime.eff.errbars, file = "output/priming_effect_errbars.csv")
+# 
 # SEMREL: Figure -------------------------------------------------
-semrel.fig <- ds[6:9,c(1,4,6)]
-dodge  <- position_dodge(width = 0.9)
-g1     <- ggplot(data = semrel.fig, aes(x = data, y = mean, fill=data)) +
-  layer(geom="bar", stat="identity", position = position_dodge())+
-  coord_cartesian(ylim = c(450, 525))+
-  geom_errorbar(aes(ymax = mean + se, ymin = mean - se), position = dodge, width = 0.2)
-g1
-ggsave(filename = "figures/SemRel F1.png")
+# semrel.fig <- ds[6:9,c(1,4,6)]
+# dodge  <- position_dodge(width = 0.9)
+# g1     <- ggplot(data = semrel.fig, aes(x = data, y = mean, fill=data)) +
+#   layer(geom="bar", stat="identity", position = position_dodge())+
+#   coord_cartesian(ylim = c(450, 525))+
+#   geom_errorbar(aes(ymax = mean + se, ymin = mean - se), position = dodge, width = 0.2)
+# g1
+# ggsave(filename = "figures/SemRel F1.png")
 #   scale_fill_manual(values=c("#990000", "#CC6666", "#000099", "#9999CC")) +
 #   guides(fill=FALSE)+
 #  + 
@@ -1254,3 +1286,22 @@ a.h.relunrel <- aov(vtime ~ localrel + Error(subj / (localrel)), data = UnrHead)
 print(summary(a.h.relunrel)) 
 
 sink()
+
+
+
+
+## -------------------------------FIGURES-----------------------------
+
+sub = rep(c("CAT"), times=4)
+cat.fig <- cbind (cat.fig, sub)
+sub = rep(c("PROP"), times=6)
+prop.fig <- cbind (prop.fig, sub)
+sub = rep(c("SEMREL"), times=4)
+semrel.fig <- cbind (semrel.fig, sub)
+
+reprime.figs.data <- rbind(cat.fig, prop.fig)
+reprime.figs.data <- rbind(reprime.figs.data, semrel.fig)
+reprime.figs.data <- reprime.figs.data[4,1,2,3]
+reprime.figs.data <- reprime.figs.data[ , c(4,1,2,3)]
+
+write.csv(reprime.figs.data, file="output/priming_figures_data.csv")
