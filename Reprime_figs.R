@@ -74,7 +74,7 @@ g2 <- ggplot(data = prime.eff,
       # theme(axis.text.x = element_text(angle = 90)
       theme(text = element_text(size=22)) +
       guides(fill=FALSE) +
-      scale_x_discrete(labels=c("Related", "Unrelated", "Related", "Unrelated", "Attribute", "Unrelated")) +        theme(legend.position="none") +
+      scale_x_discrete(labels=c("Related", "Unrelated", "Related", "Unrelated", "Attribute", "Associate", "Unrelated")) +        theme(legend.position="none") +
       geom_hline(yintercept = 0)    +
       xlab("\n\nLocal Noun Condition\n") +
       theme(axis.title.x=element_text(vjust=-.45, size=22)) +      
@@ -95,19 +95,20 @@ g2 <- ggplot(data = prime.eff,
                 rep(c("Exp2:Coordinates"), times=4), 
                 rep(c("Exp2:Semantic-Associative"), times=6)),  
     LN      = c("Related - Related",
-                "Unrelated- Related",
+                "Unrelated - Related",
                 "Related - Unrelated",
                 "Unrelated - Unrelated",
                 "Related - Coordinate",
-                "Unrelated- Non-Coordinate",
-                "Related - Coordinate",
+                "Unrelated - Coordinate",
+                "Related - Non-Coordinate",
                 "Unrelated - Non-Coordinate",
                 "Related - Attribute",
-                "Unrelated _ Attribute",
+                "Unrelated - Attribute",
                 "Related - Associate",
-                "Unrelated _ Associate",
+                "Unrelated - Associate",
                 "Related - Non-Attrb/Assoc",
-                "Unrelated - Non-Attrb/Assoc" ),
+                "Unrelated - Non-Attrb/Assoc" 
+                 ),
     Priming = c(data$mean[11],
                  data$mean[13],
                 data$mean[12],
@@ -127,29 +128,27 @@ g2 <- ggplot(data = prime.eff,
   
   
   
-  
-  baseline$LN <- factor(baseline$LN, levels=c("Related - Related",
-                                              "Unrelated- Related",
-                                              "Related - Unrelated",
-                                              "Unrelated - Unrelated",
-                                              "Related - Coordinate",
-                                              "Unrelated- Non-Coordinate",
-                                              "Related - Coordinate",
-                                              "Unrelated - Non-Coordinate",
-                                              "Related - Attribute",
-                                              "Unrelated _ Attribute",
-                                              "Related - Associate",
-                                              "Unrelated _ Associate",
-                                              "Related - Non-Attrb/Assoc",
-                                              "Unrelated - Non-Attrb/Assoc" ))
+
   dodge  <- position_dodge(width = 0.9) # set position doge
   
-baseline$LN <- factor(baselinef$LN, levels=c("Related", "Unrelated","Cordinate", "Noncoordinate", "Attribute", "Associate", "Unrel"))
+baseline$LN <- factor(baseline$LN, levels=c("Related - Related",
+                                            "Unrelated - Related",
+                                            "Related - Unrelated",
+                                            "Unrelated - Unrelated",
+                                            "Related - Coordinate",
+                                            "Unrelated - Coordinate",
+                                            "Related - Non-Coordinate",
+                                            "Unrelated - Non-Coordinate",
+                                            "Related - Attribute",
+                                            "Unrelated - Attribute",
+                                            "Related - Associate",
+                                            "Unrelated - Associate",
+                                            "Related - Non-Attrb/Assoc",
+                                            "Unrelated - Non-Attrb/Assoc" ))
 
+baseline$Exp  <- factor(baseline$Exp, levels = c("Experiment 1","Exp2:Coordinates","Exp2:Semantic-Associative"))
   
-  
-  
-  g2 <- ggplot(data = baseline,  aes(y=Priming, x = interaction(Exp,LN), fill = interaction(Exp,LN))) +
+  g3 <- ggplot(data = baseline,  aes(y=Priming, x = LN, fill = LN)) +
     layer(geom="bar", stat="identity", position = position_dodge(), color = c(
       "#990000",
       "#990000",
@@ -186,14 +185,14 @@ baseline$LN <- factor(baselinef$LN, levels=c("Related", "Unrelated","Cordinate",
     )) +
      theme(axis.text.x = element_text(angle = 90)) +
     theme(text = element_text(size=22))+
-    coord_cartesian(ylim = c(450, 525)) +
-      scale_y_continuous(breaks=seq(450, 525, 25)) +
+    coord_cartesian(ylim = c(435, 475)) +
+      scale_y_continuous(breaks=seq(435, 475, 25)) +
     xlab("\n\nLocal Noun Condition\n") +
       theme(axis.title.x=element_text(vjust=-.45, size=22)) +      
       ylab("Priming Effect (ms)") +
     # scale_x_discrete(labels=c("Related", "Unrelated", "Related", "Unrelated", "Attribute", "Unrelated")) +        theme(legend.position="none") +
     geom_hline(yintercept = 0)  
-  g2 
+  g3 
   
   , 
   

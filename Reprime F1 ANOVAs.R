@@ -10,6 +10,9 @@ f1vtimeout <- read.csv("data/vtimeoutS001to111_trim.csv", header=FALSE)
 colnames(f1vtimeout) <- c("subj", "item", "subexp", "headrel", "localrel", "vtime")
 
 d.cat.base     <- subset(f1vtimeout, subexp == "Cat")
+d.cat.base$subexp <-factor(d.cat.base$subexp)
+d.cat.base$headrel <-factor(d.cat.base$headrel)
+d.cat.base$localrel <-factor(d.cat.base$localrel)
 d.cat          <- subset(f1vtimeout, subexp == "Cat")
 
 # CAT: Collapse over subject
@@ -122,7 +125,7 @@ cat.fig <- ds.cat[6:9,c(1,4,6)]
 # CAT: All 2X2 ANOVA-----------------------------------------------------
 
 sink("output/Reprime Category F1 Factorial Analyses.txt")
-
+sink()
 cat(" ", "\n")
 cat("BY-SUBJECTS FACTORIAL ANALYSES RUN ON: ", format(Sys.time(), "%b. %d, %Y at %T"), sep = "", fill= 70)
 cat(" ", "\n")
@@ -132,8 +135,20 @@ cat(rep(c("-"), times=40, quote=F), "\n")
 print(ds) 
 cat(" ", "\n")
 
-a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.cat)
+NRel.base$subj <- factor(NRel.base$subj)
+a.2x2 <- aov(vtime ~ headrel + Error(subj / headrel), data = NRel.base)
 print(summary(a.2x2)) 
+
+NUnr.base$subj <- factor(NUnr.base$subj)
+a.2x2 <- aov(vtime ~ headrel + Error(subj / headrel), data = NUnr.base)
+print(summary(a.2x2)) 
+
+d.cat.base$subj <- factor(d.cat.base$subj)
+a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.cat.base)
+print(summary(a.2x2)) 
+
+
+
 cat(" ", "\n")
 cat(" ", "\n")
 
@@ -228,8 +243,11 @@ f1vtimeout <- read.csv("data/vtimeoutS001to111_trim.csv", header=FALSE)
 colnames(f1vtimeout) <- c("subj", "item", "subexp", "headrel", "localrel", "vtime")
 
 d.prop         <- subset(f1vtimeout, subexp == "Attr")
-d.prop.base    <- subset(f1vtimeout, subexp == "Attr")
 
+d.prop.base    <- subset(f1vtimeout, subexp == "Attr")
+d.prop.base$subexp   <-factor(d.prop.base$subexp)
+d.prop.base$headrel  <-factor(d.prop.base$headrel)
+d.prop.base$localrel <-factor(d.prop.base$localrel)
 
 # PROP: Collapse over subject
 d.prop$unique.id <- paste(d.prop[, 1], d.prop[, 3], d.prop[, 4], d.prop[, 5], sep = "_")
@@ -241,9 +259,10 @@ d.prop           <- cbind(d.prop,vtime)
 colnames(d.prop)[5] <- "vtime"
 rm(vtime)
 
-d.prop$subexp   <- factor(d.prop$subexp)
-d.prop$headrel  <- factor(d.prop$headrel)
-d.prop$localrel <- factor(d.prop$localrel)
+d.prop$subexp   <-factor(d.prop$subexp)
+d.prop$headrel  <-factor(d.prop$headrel)
+d.prop$localrel <-factor(d.prop$localrel)
+
 
 
 
@@ -384,6 +403,25 @@ prop.err <- data.frame(data = c(
 
 
 
+
+NRel.base$subj <- factor(NRel.base$subj)
+a.2x2 <- aov(vtime ~ headrel + Error(subj / headrel), data = NRel.base)
+print(summary(a.2x2)) 
+
+NAssc.base$subj <- factor(NAssc.base$subj)
+a.2x2 <- aov(vtime ~ headrel + Error(subj / headrel), data = NAssc.base)
+print(summary(a.2x2)) 
+
+NUnr.base$subj <- factor(NUnr.base$subj)
+a.2x2 <- aov(vtime ~ headrel + Error(subj / headrel), data = NUnr.base)
+print(summary(a.2x2)) 
+
+
+d.prop.base$subj <- factor(d.prop.base$subj)
+a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.prop.base)
+print(summary(a.2x2)) 
+
+
 # PROP: All 2X3 ANOVA-----------------------------------------------------
 
 sink("output/Reprime Property F1 Factorial Analyses.txt")
@@ -446,7 +484,7 @@ UnrHead.NUnr.base  <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==
 # ----
 
 
-# PROP (Rel vs. Unr): Collapsed subjects subsetting
+#------------------- PROP (Rel vs. Unr): Collapsed subjects subsetting -------
 HeadN         <- subset(d.prop, headrel   ==  "HeadN") 
 UnrHead       <- subset(d.prop, headrel   ==  "UnrHead")
 NRel          <- subset(d.prop, localrel  ==  "NRel") 
@@ -650,7 +688,7 @@ UnrHead.NAssc.base <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==
 # ----
 
 
-# PROP (Assc vs. Unr): Collapsed subjects subsetting
+# --------- PROP (Assc vs. Unr): Collapsed subjects subsetting ---------------
 HeadN         <- subset(d.prop, headrel   ==  "HeadN") 
 UnrHead       <- subset(d.prop, headrel   ==  "UnrHead")
 NUnr          <- subset(d.prop, localrel  ==  "NUnr") 
@@ -1165,6 +1203,19 @@ prime.eff.errbars <- rbind(cat.err, prop.err)
 prime.eff.errbars <- rbind(prime.eff.errbars, semrel.err)
 write.csv(prime.eff.errbars, file = "output/priming_effect_errbars.csv")
 
+
+
+NRel.base$subj <- factor(NRel.base$subj)
+a.2x2 <- aov(vtime ~ headrel + Error(subj / headrel), data = NRel.base)
+print(summary(a.2x2)) 
+
+NUnr.base$subj <- factor(NUnr.base$subj)
+a.2x2 <- aov(vtime ~ headrel + Error(subj / headrel), data = NUnr.base)
+print(summary(a.2x2)) 
+
+d.semrel.base$subj <- factor(d.semrel.base$subj)
+a.2x2 <- aov(vtime ~ headrel * localrel + Error(subj / (headrel * localrel)), data = d.semrel.base)
+print(summary(a.2x2)) 
 
 
 
