@@ -5,9 +5,10 @@ library(plyr)
 library(stringr)
 library(ggplot2) 
 # CATEGORY ITEMS ==============================================================================================
+f1vtimeout <- read.csv("data/vtimeoutS001to111_trim.csv", header=FALSE)
 
-f1vtimeout <- read.table("data/vtimeoutc.txt", header = F) 
 colnames(f1vtimeout) <- c("subj", "item", "subexp", "headrel", "localrel", "vtime")
+
 d.cat.base     <- subset(f1vtimeout, subexp == "Cat")
 d.cat          <- subset(f1vtimeout, subexp == "Cat")
 
@@ -20,6 +21,9 @@ d.cat$subj      <- as.factor(d.cat$subj)
 d.cat           <- cbind(d.cat,vtime)
 colnames(d.cat)[5] <- "vtime"
 rm(vtime)
+d.cat$subexp <- factor(d.cat$subexp)
+d.cat$headrel <- factor(d.cat$headrel)
+d.cat$localrel <- factor(d.cat$localrel)
 
 # CAT: All subjects subsetting
 HeadN.base         <- subset(d.cat.base, headrel   ==  "HeadN") 
@@ -41,13 +45,13 @@ HeadN.NUnr    <- subset(d.cat, headrel   ==  "HeadN"   & localrel  ==  "NUnr")
 UnrHead.NRel  <- subset(d.cat, headrel   ==  "UnrHead" & localrel  ==  "NRel") 
 UnrHead.NUnr  <- subset(d.cat, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
 
-# # Prming Effect Error Bars
-# cat.err <- data.frame(data = c(
-#   sqrt( ( sd( HeadN.NRel$vtime)^2 / length( HeadN.NRel$vtime)) + 
-#           ( sd( UnrHead.NRel$vtime)^2 / length(UnrHead.NRel$vtime))),    
-#   sqrt( ( sd( HeadN.NUnr$vtime)^2 / length( HeadN.NUnr$vtime)) + 
-#           ( sd( UnrHead.NUnr$vtime)^2 / length(UnrHead.NUnr$vtime)))    
-# ))
+# Prming Effect Error Bars
+cat.err <- data.frame(data = c(
+  sqrt( ( sd( HeadN.NRel$vtime)^2 / length( HeadN.NRel$vtime)) + 
+          ( sd( UnrHead.NRel$vtime)^2 / length(UnrHead.NRel$vtime))),    
+  sqrt( ( sd( HeadN.NUnr$vtime)^2 / length( HeadN.NUnr$vtime)) + 
+          ( sd( UnrHead.NUnr$vtime)^2 / length(UnrHead.NUnr$vtime)))    
+))
 
 ds.cat <- data.frame(data = c(
   "Grand Mean",
@@ -110,6 +114,9 @@ ds.cat <- data.frame(data = c(
          sd(UnrHead.NRel$vtime)/ sqrt(length(UnrHead.NRel$vtime)),
          sd(UnrHead.NUnr$vtime)/ sqrt(length(UnrHead.NUnr$vtime))
   ))
+
+
+cat.fig <- ds.cat[6:9,c(1,4,6)]
 
 
 # CAT: All 2X2 ANOVA-----------------------------------------------------
@@ -217,7 +224,7 @@ library(reshape2)
 library(plyr)
 library(stringr)
 
-f1vtimeout <- read.table("data/vtimeoutc.txt", header = F) 
+f1vtimeout <- read.csv("data/vtimeoutS001to111_trim.csv", header=FALSE)
 colnames(f1vtimeout) <- c("subj", "item", "subexp", "headrel", "localrel", "vtime")
 
 d.prop         <- subset(f1vtimeout, subexp == "Attr")
@@ -234,6 +241,12 @@ d.prop           <- cbind(d.prop,vtime)
 colnames(d.prop)[5] <- "vtime"
 rm(vtime)
 
+d.prop$subexp   <- factor(d.prop$subexp)
+d.prop$headrel  <- factor(d.prop$headrel)
+d.prop$localrel <- factor(d.prop$localrel)
+
+
+
 # PROP: All subjects subsetting
 HeadN.base         <- subset(d.prop.base, headrel   ==  "HeadN") 
 UnrHead.base       <- subset(d.prop.base, headrel   ==  "UnrHead")
@@ -248,12 +261,12 @@ UnrHead.NUnr.base  <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==
 UnrHead.NAssc.base <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NAssc")
 
 # ----
-HeadN.Rel.Un.base      <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NRel" & localrel  ==  "NUnr") 
-UnrHead.Rel.Un.base    <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NRel" & localrel  ==  "NUnr")
-HeadN.Ass.Un.base      <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NAssc" & localrel  ==  "NUnr") 
-UnrHead.Ass.Un.base    <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NAssc" & localrel  ==  "NUnr")
-HeadN.Rel.Ass.base      <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NAssc" & localrel  ==  "NRel") 
-UnrHead.Rel.Ass.base    <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NAssc" & localrel  ==  "NRel")
+HeadN.Rel.Un.base      <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NRel" | localrel  ==  "NUnr") 
+UnrHead.Rel.Un.base    <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NRel" | localrel  ==  "NUnr")
+HeadN.Ass.Un.base      <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NAssc" | localrel  ==  "NUnr") 
+UnrHead.Ass.Un.base    <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NAssc" | localrel  ==  "NUnr")
+HeadN.Rel.Ass.base      <- subset(d.prop.base, headrel   ==  "HeadN"   & localrel  ==  "NAssc" | localrel  ==  "NRel") 
+UnrHead.Rel.Ass.base    <- subset(d.prop.base, headrel   ==  "UnrHead" & localrel  ==  "NAssc" | localrel  ==  "NRel")
 
 # PROP: Collapsed subjects subsetting
 HeadN         <- subset(d.prop, headrel   ==  "HeadN") 
@@ -268,12 +281,12 @@ UnrHead.NRel  <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NRel")
 UnrHead.NUnr  <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NUnr")
 UnrHead.NAssc <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NAssc")
 # ----
-HeadN.Rel.Un      <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NRel" & localrel  ==  "NUnr") 
-UnrHead.Rel.Un    <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NRel" & localrel  ==  "NUnr")
-HeadN.Ass.Un      <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NAssc" & localrel  ==  "NUnr") 
-UnrHead.Ass.Un    <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NAssc" & localrel  ==  "NUnr")
-HeadN.Rel.Ass      <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NAssc" & localrel  ==  "NRel") 
-UnrHead.Rel.Ass    <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NAssc" & localrel  ==  "NRel")
+HeadN.Rel.Un      <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NRel" | localrel  ==  "NUnr") 
+UnrHead.Rel.Un    <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NRel" | localrel  ==  "NUnr")
+HeadN.Ass.Un      <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NAssc" | localrel  ==  "NUnr") 
+UnrHead.Ass.Un    <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NAssc" | localrel  ==  "NUnr")
+HeadN.Rel.Ass      <- subset(d.prop, headrel   ==  "HeadN"   & localrel  ==  "NAssc" | localrel  ==  "NRel") 
+UnrHead.Rel.Ass    <- subset(d.prop, headrel   ==  "UnrHead" & localrel  ==  "NAssc" | localrel  ==  "NRel")
 
 ds <- data.frame(data = c(
   "Grand Mean",
@@ -358,16 +371,16 @@ ds <- data.frame(data = c(
 
 
 
-# # ---------Priming EFfect Error Bars----------
-# 
-# prop.err <- data.frame(data = c(
-#   sqrt( ( sd( HeadN.NRel$vtime)^2 / length( HeadN.NRel$vtime)) + 
-#           ( sd( UnrHead.NRel$vtime)^2 / length(UnrHead.NRel$vtime))),  
-#   sqrt( ( sd( HeadN.NAssc$vtime)^2 / length( HeadN.NAssc$vtime)) + 
-#           ( sd( UnrHead.NAssc$vtime)^2 / length(UnrHead.NAssc$vtime))),  
-#   sqrt( ( sd( HeadN.NUnr$vtime)^2 / length( HeadN.NUnr$vtime)) + 
-#           ( sd( UnrHead.NUnr$vtime)^2 / length(UnrHead.NUnr$vtime)))    
-# ))
+# ---------Priming EFfect Error Bars----------
+
+prop.err <- data.frame(data = c(
+  sqrt( ( sd( HeadN.NRel$vtime)^2 / length( HeadN.NRel$vtime)) + 
+          ( sd( UnrHead.NRel$vtime)^2 / length(UnrHead.NRel$vtime))),  
+  sqrt( ( sd( HeadN.NAssc$vtime)^2 / length( HeadN.NAssc$vtime)) + 
+          ( sd( UnrHead.NAssc$vtime)^2 / length(UnrHead.NAssc$vtime))),  
+  sqrt( ( sd( HeadN.NUnr$vtime)^2 / length( HeadN.NUnr$vtime)) + 
+          ( sd( UnrHead.NUnr$vtime)^2 / length(UnrHead.NUnr$vtime)))    
+))
 
 
 
@@ -392,23 +405,9 @@ cat(" ", "\n")
 
 
 
-cat.err <- data.frame(data = c(
-  sqrt( ( sd( HeadN.NRel$vtime)^2 / length( HeadN.NRel$vtime)) + 
-          ( sd( UnrHead.NRel$vtime)^2 / length(UnrHead.NRel$vtime))),    
-  sqrt( ( sd( HeadN.NUnr$vtime)^2 / length( HeadN.NUnr$vtime)) + 
-          ( sd( UnrHead.NUnr$vtime)^2 / length(UnrHead.NUnr$vtime)))    
-))
-
 
 # PROP: Figure ----------------------------------------------------
 prop.fig <- ds[7:12,c(1,4,6)]
-dodge  <- position_dodge(width = 0.9)
-g1     <- ggplot(data = prop.fig, aes(x = data, y = mean, fill=data)) +
-  layer(geom="bar", stat="identity", position = position_dodge())+
-  coord_cartesian(ylim = c(450, 525))+
-  geom_errorbar(aes(ymax = mean + se, ymin = mean - se), position = dodge, width = 0.2)
-g1
-ggsave(filename = "figures/Property F1.png")
 
 # PROP: (NRel vs. NUnrel) -------------------------------------------------------------------------------
 rm(list = ls()) 
@@ -1037,7 +1036,9 @@ library(reshape2)
 library(plyr)
 library(stringr)
 
-f1vtimeout <- read.table("data/vtimeoutc.txt", header = F) 
+f1vtimeout <- read.csv("data/vtimeoutS001to111_trim.csv", header=FALSE)
+
+
 colnames(f1vtimeout) <- c("subj", "item", "subexp", "headrel", "localrel", "vtime")
 
 d.semrel       <- subset(f1vtimeout, subexp == "SemRel")
@@ -1052,6 +1053,11 @@ d.semrel$subj      <- as.factor(d.semrel$subj)
 d.semrel           <- cbind(d.semrel,vtime)
 colnames(d.semrel)[5] <- "vtime"
 rm(vtime)
+
+d.semrel$subexp   <- factor(d.semrel$subexp)
+d.semrel$headrel  <- factor(d.semrel$headrel)
+d.semrel$localrel <- factor(d.semrel$localrel)
+
 
 # SEMREL:  All subjects subsetting
 HeadN.base         <- subset(d.semrel.base, headrel   ==  "HeadN") 
@@ -1141,52 +1147,24 @@ ds <- data.frame(data = c(
          sd(UnrHead.NUnr$vtime)/ sqrt(length(UnrHead.NUnr$vtime))
   ))
 
-# Prming Effect Error Bars
-# semrel.err <- data.frame(data = c(
-#   sqrt( ( sd( HeadN.NRel$vtime)^2 / length( HeadN.NRel$vtime)) + 
-#           ( sd( UnrHead.NRel$vtime)^2 / length(UnrHead.NRel$vtime))),    
-#   sqrt( ( sd( HeadN.NUnr$vtime)^2 / length( HeadN.NUnr$vtime)) + 
-#           ( sd( UnrHead.NUnr$vtime)^2 / length(UnrHead.NUnr$vtime)))    
-# ))
+# -Prming Effect Error Bars
+semrel.err <- data.frame(data = c(
+  sqrt( ( sd( HeadN.NRel$vtime)^2 / length( HeadN.NRel$vtime)) + 
+          ( sd( UnrHead.NRel$vtime)^2 / length(UnrHead.NRel$vtime))),
+  sqrt( ( sd( HeadN.NUnr$vtime)^2 / length( HeadN.NUnr$vtime)) + 
+          ( sd( UnrHead.NUnr$vtime)^2 / length(UnrHead.NUnr$vtime)))))
 
-SE = c(
-  sd(se.rel.int$error) / sqrt(length(se.rel.int$error)),
-  sd(se.rel.uni$error) / sqrt(length(se.rel.uni$error)),
-  sd(se.unr.int$error) / sqrt(length(se.unr.int$error)),
-  sd(se.unr.uni$error) / sqrt(length(se.unr.uni$error)))
-)
+ semrel.fig <- ds[6:9,c(1,4,6)]
 
-# cat.err$cond <- c("Cat.Rel","Car.Unrel")
-# prop.err$cond <- c("Prop.Rel", "Prop.Ass", "Prop.Unrel")
-# semrel.err$cond <- c("SR.Rel","SR.Unrel")
-# 
-# ### PRIMING EXPERIMENT ERROR BARS DAT FRAME
-# prime.eff.errbars <- rbind(cat.err, prop.err)
-# prime.eff.errbars <- rbind(prime.eff.errbars, semrel.err)
-# write.csv(prime.eff.errbars, file = "output/priming_effect_errbars.csv")
-# 
-# SEMREL: Figure -------------------------------------------------
-# semrel.fig <- ds[6:9,c(1,4,6)]
-# dodge  <- position_dodge(width = 0.9)
-# g1     <- ggplot(data = semrel.fig, aes(x = data, y = mean, fill=data)) +
-#   layer(geom="bar", stat="identity", position = position_dodge())+
-#   coord_cartesian(ylim = c(450, 525))+
-#   geom_errorbar(aes(ymax = mean + se, ymin = mean - se), position = dodge, width = 0.2)
-# g1
-# ggsave(filename = "figures/SemRel F1.png")
-#   scale_fill_manual(values=c("#990000", "#CC6666", "#000099", "#9999CC")) +
-#   guides(fill=FALSE)+
-#  + 
-#   +
-#   scale_y_continuous(breaks=seq(0, 14, 2))+
-#   annotate("text", x = 1:4, y = -1, label = rep(c("Integrated", "Unintegrated"), 2), size=6) +
-#   annotate("text", c(1.5, 3.5), y = -2, label = c("Related", "Unrelated"), size=6) +
-#   
-#   theme_classic() +
-#   theme(text = element_text(size=18.5)) +
-#   ylab("Mismatch effect (%)") +
-#   theme(axis.title.y=element_text(vjust=1.5)) +
-#   theme(plot.margin = unit(c(1, 1, 4, 1), "lines"), axis.title.x = element_blank(), axis.text.x = element_blank())
+cat.err$cond <- c("Cat.Rel","Car.Unrel")
+prop.err$cond <- c("Prop.Rel", "Prop.Ass", "Prop.Unrel")
+semrel.err$cond <- c("SR.Rel","SR.Unrel")
+
+### PRIMING EXPERIMENT ERROR BARS DAT FRAME
+prime.eff.errbars <- rbind(cat.err, prop.err)
+prime.eff.errbars <- rbind(prime.eff.errbars, semrel.err)
+write.csv(prime.eff.errbars, file = "output/priming_effect_errbars.csv")
+
 
 
 
@@ -1301,7 +1279,6 @@ semrel.fig <- cbind (semrel.fig, sub)
 
 reprime.figs.data <- rbind(cat.fig, prop.fig)
 reprime.figs.data <- rbind(reprime.figs.data, semrel.fig)
-reprime.figs.data <- reprime.figs.data[4,1,2,3]
 reprime.figs.data <- reprime.figs.data[ , c(4,1,2,3)]
 
 write.csv(reprime.figs.data, file="output/priming_figures_data.csv")
