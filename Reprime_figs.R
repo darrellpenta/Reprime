@@ -194,5 +194,4 @@ baseline$Exp  <- factor(baseline$Exp, levels = c("Experiment 1","Exp2:Coordinate
     geom_hline(yintercept = 0)  
   g3 
   
-  , 
   
